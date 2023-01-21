@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	
+
+	<head>
+		
+		<link rel="stylesheet" type="text/css" href="login.css">
+		<meta charset="utf-8">
+		<title>Login Form Tutorial</title>
+		<header></header>
+		<style>
+			
+			
+		.login-form {
+			width: 300px;
+			margin: 0 auto;
+			font-family: Tahoma, Geneva, sans-serif;
+		}
+		.login-form h1 {
+			text-align: center;
+			color: #0A0105;
+			font-size: 24px;
+			padding: 20px 0 20px 0;
+		}
+		.login-form input[type="password"],
+		.login-form input[type="text"] {
+			width: 100%;
+			padding: 15px;
+			border: 1px solid #8E9EED;
+			margin-bottom: 15px;
+			box-sizing:border-box;
+		}
+		.login-form input[type="submit"] {
+			width: 100%;
+			padding: 15px;
+			background-color: #BCF098;
+			border: 0;
+			box-sizing: border-box;
+			cursor: pointer;
+			font-weight: bold;
+			color: #203DE1;
+		}
+		
+		</style>
+	</head>
+	<body>
+		
+		
+ 
+		<div class="login-form">
+			<h1>Login Form</h1>
+			<form action="login" method="POST">
+				<input type="text" name="name" placeholder="Username" required>
+				<input type="text" name="age" placeholder="age" required>
+				<input type="submit">
+			</form>
+		</div>
+		<footer></footer>
+	</body>
+</html>
