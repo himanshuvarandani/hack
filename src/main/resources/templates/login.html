@@ -2,23 +2,11 @@
 <html>
 	<head>
 	    <title>HACK</title>
-	    <link rel="stylesheet" type="text/css" href="css/layout.css">
 	    <link rel="stylesheet" type="text/css" href="css/login.css">
 	</head>
 	<body>
         <header>
-			<div class="main">
-				<img
-					class="logo"
-					src="images/HACK_logo.png"
-					width="50px"
-					height="50px"
-				/>
-				<h1>HACK</h1>
-			</div>
-			<div>
-				<a href="/login.html"><h2>Login</h2></a>
-			</div>
+			<th:block th:include="fragments/layout :: header" />
         </header>
 		<div class="login-form">
 			<h1>Login Form</h1>
@@ -29,11 +17,7 @@
 			</form>
 		</div>
         <footer>
-			<h2>Hack</h2>
-			<div>
-	            <a href="/index.html"><p>Home</p></a>
-	            <a href="/index.html#about"><p>About</p></a>
-			</div>
+			<th:block th:include="fragments/layout :: footer" />
         </footer>
 	</body>
 </html>
