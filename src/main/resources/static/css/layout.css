@@ -25,6 +25,15 @@ header .main {
 	align-items: center;
 }
 
+header .right-content {
+	display: flex;
+	align-items: center;
+}
+
+header .right-content h2 {
+	margin-left: 20px;
+}
+
 header a, footer a {
 	text-decoration: none;
 	color: white;

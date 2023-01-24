@@ -2,7 +2,8 @@
 <html>
 	<head>
 	    <title>HACK</title>
-	    <link rel="stylesheet" type="text/css" href="css/login.css">
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/layout.css}">
+	    <link rel="stylesheet" type="text/css" th:href="@{css/login.css}">
 	</head>
 	<body>
         <header>
@@ -10,9 +11,9 @@
         </header>
 		<div class="login-form">
 			<h1>Login Form</h1>
-			<form action="login" method="POST">
-				<input type="text" name="name" placeholder="Username" required>
-				<input type="text" name="age" placeholder="age" required>
+			<form action="/auth/signin" method="POST">
+				<input type="text" name="username" placeholder="Username" required>
+				<input type="text" name="password" placeholder="Password" required>
 				<input type="submit">
 			</form>
 		</div>

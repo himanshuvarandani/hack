@@ -4,21 +4,22 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 @Entity
 public class UserDetails {
 	@Id
-	  @GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private Integer Id;
+	private Integer EmployeedId;
+	private Integer JoiningDate;
+	private Integer ProjectId;
+	private Integer DateOfBirth;
+	private Integer ContactNumber;
+	private Integer EmergencyContact;
+	private String Name;
+	private String Address;
+	private String Bloodgroup;
 	
-	  private Integer Id;
-	  private Integer EmployeedId;
-	  private Integer JoiningDate;
-	  private Integer ProjectId;
-	  private Integer DateOfBirth;
-	  private Integer ContactNumber;
-	  private Integer EmergencyContact;
-	  private String Name;
-	  private String Address;
-	  private String Bloodgroup;
 	public Integer getId() {
 		return Id;
 	}
@@ -79,6 +80,4 @@ public class UserDetails {
 	public void setBloodgroup(String bloodgroup) {
 		Bloodgroup = bloodgroup;
 	}
-	  
-
 }
