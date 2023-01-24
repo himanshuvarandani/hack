@@ -15,15 +15,15 @@
 				<a href="/signin"><h2>Login</h2></a>
 			</div>
 			<div th:unless="${jwtToken==null}" class="right-content">
-				<a href="/profile"><h2>Profile</h2></a>
+				<a th:href="@{'/profile?authorization=Bearer%20' + ${jwtToken}}"><h2>Profile</h2></a>
 				<a href="/"><h2>Logout</h2></a>
 			</div>
         </header>
         <footer th:fragment="footer">
 			<h2>Hack</h2>
 			<div>
-	            <a href="/"><p>Home</p></a>
-	            <a href="/#about"><p>About</p></a>
+	            <a th:href="@{'/?authorization=Bearer%20' + ${jwtToken}}"><p>Home</p></a>
+	            <a th:href="@{'/?authorization=Bearer%20' + ${jwtToken} + '#about'}"><p>About</p></a>
 			</div>
         </footer>
 	</body>

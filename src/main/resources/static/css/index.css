@@ -4,8 +4,8 @@
 }
 
 .main-image img {
-	width: 90%;
 	max-height: 30%;
+	max-width: 90%;
 	border-radius: 20px;
 }
 
