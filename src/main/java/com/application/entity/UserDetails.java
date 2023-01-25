@@ -1,5 +1,7 @@
 package com.application.entity;
 
+import java.sql.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,9 +13,9 @@ public class UserDetails {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Integer Id;
 	private Integer EmployeedId;
-	private Integer JoiningDate;
+	private Date JoiningDate;
 	private Integer ProjectId;
-	private Integer DateOfBirth;
+	private Date DateOfBirth;
 	private Integer ContactNumber;
 	private Integer EmergencyContact;
 	private String Name;
@@ -32,10 +34,10 @@ public class UserDetails {
 	public void setEmployeedId(Integer employeedId) {
 		EmployeedId = employeedId;
 	}
-	public Integer getJoiningDate() {
+	public Date getJoiningDate() {
 		return JoiningDate;
 	}
-	public void setJoiningDate(Integer joiningDate) {
+	public void setJoiningDate(Date joiningDate) {
 		JoiningDate = joiningDate;
 	}
 	public Integer getProjectId() {
@@ -44,10 +46,10 @@ public class UserDetails {
 	public void setProjectId(Integer projectId) {
 		ProjectId = projectId;
 	}
-	public Integer getDateOfBirth() {
+	public Date getDateOfBirth() {
 		return DateOfBirth;
 	}
-	public void setDateOfBirth(Integer dateOfBirth) {
+	public void setDateOfBirth(Date dateOfBirth) {
 		DateOfBirth = dateOfBirth;
 	}
 	public Integer getContactNumber() {
