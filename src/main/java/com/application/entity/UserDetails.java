@@ -30,7 +30,7 @@ public class UserDetails {
 	
 	private String address;
 	
-	private String bloodgroup;
+	private String bloodGroup;
 	
 	private Date joiningDate;
 	
@@ -101,12 +101,12 @@ public class UserDetails {
 		this.address = address;
 	}
 
-	public String getBloodgroup() {
-		return bloodgroup;
+	public String getBloodGroup() {
+		return bloodGroup;
 	}
 
-	public void setBloodgroup(String bloodgroup) {
-		this.bloodgroup = bloodgroup;
+	public void setBloodGroup(String bloodGroup) {
+		this.bloodGroup = bloodGroup;
 	}
 
 	public Date getJoiningDate() {

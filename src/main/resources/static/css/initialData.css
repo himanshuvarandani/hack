@@ -1,0 +1,57 @@
+.main-image {
+	display: flex;
+	justify-content: center;
+}
+
+.main-image img {
+	max-height: 30%;
+	max-width: 90%;
+	border-radius: 20px;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 2%;
+}
+
+.form form {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.form h1 {
+	text-align: center;
+	padding: 20px 0 20px 0;
+}
+
+.form .file-input-group {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.form input[type="file"] {
+	padding: 15px;
+	border: 1px solid #7286D3;
+	border-radius: 10px;
+	margin-left: 15px;
+	box-sizing:border-box;
+}
+
+
+.form input[type="submit"] {
+	font-size: 1.1rem;
+	padding: 15px 30px;
+	background-color: #7286D3;
+	border: 0;
+	border-radius: 10px;
+	box-sizing: border-box;
+	cursor: pointer;
+	font-weight: bold;
+}

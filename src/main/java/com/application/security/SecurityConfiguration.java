@@ -61,6 +61,7 @@ public class SecurityConfiguration {
 	        .requestMatchers("/images/**").permitAll()
 	        .requestMatchers("/favicon.ico").permitAll()
 	        .requestMatchers("/error").permitAll()
+	        .requestMatchers("/initialize-data").permitAll()
 	        .requestMatchers("/").permitAll()
 	        .requestMatchers("/signin").permitAll()
 	        .requestMatchers("/hr/**").hasRole("HR")
