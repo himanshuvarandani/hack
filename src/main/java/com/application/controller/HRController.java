@@ -3,6 +3,7 @@ package com.application.controller;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.Iterator;
+import java.util.Optional;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -10,10 +11,13 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,28 +28,50 @@ import com.application.entity.UserDetails;
 import com.application.repository.ProjectRepository;
 import com.application.repository.UserDetailsRepository;
 import com.application.repository.UserRepository;
+import com.application.security.jwt.JwtUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
-public class InitialDataController {
+@RequestMapping("/hr")
+@PreAuthorize("hasRole('HR')")
+public class HRController {
 	@Autowired
 	PasswordEncoder passwordEncoder;
+
+	@Autowired
+	ProjectRepository projectRepository;
 	
 	@Autowired
 	UserRepository userRepository;
 	
 	@Autowired
-	ProjectRepository projectRepository;
-	
-	@Autowired
 	UserDetailsRepository userDetailsRepository;
 	
-	@GetMapping("/initialize-data")
-	public String initializeData() {
-		return "initializeData";
+	@Autowired
+	JwtUtils jwtUtils;
+	
+	@GetMapping(value={"", "/"})
+	public String hr(HttpServletRequest request, Model model) {
+		String headerAuth = request.getParameter("authorization");
+
+		model.addAttribute("jwtToken", headerAuth.substring(7, headerAuth.length()));
+		return "hr";
 	}
 	
-	@PostMapping("/initialize-data")
-	public String postInitializeData(@RequestParam MultipartFile file) {
+	@GetMapping("/add-employees")
+	public String addEmployees(HttpServletRequest request, Model model) {
+		String headerAuth = request.getParameter("authorization");
+
+		model.addAttribute("jwtToken", headerAuth.substring(7, headerAuth.length()));
+		return "addEmployees";
+	}
+	
+	@PostMapping("/add-employees")
+	public String postAddEmployees(@RequestParam MultipartFile file, HttpServletRequest request, Model model) {
+		String headerAuth = request.getParameter("authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+		
 		try {
 			Workbook workbook = new XSSFWorkbook(file.getInputStream());
 			
@@ -55,26 +81,24 @@ public class InitialDataController {
 			
 			DataFormatter fmt = new DataFormatter();
 			
+			// Get Project for current hr
+			String username = jwtUtils.getUserNameFromJwtToken(token);
+			Optional<User> hr = userRepository.findByUsername(username);
+			UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
+			Project project = hrDetails.getProject();
+			
 			while (rows.hasNext()) {
 				Row row = rows.next();
 				
-				// Create User with encoded password
+				// Create user account with password encoding
 				User user = new User();
 				user.setUsername(row.getCell(0).getStringCellValue());
 				user.setEmail(row.getCell(1).getStringCellValue());
 				user.setPassword(passwordEncoder.encode(row.getCell(2).getStringCellValue()));
-				user.setRole(Role.ROLE_HR);
+				user.setRole(Role.ROLE_EMPLOYEE);
 				user = userRepository.save(user);
 				
-				// Create project
-				Project project = new Project();
-				project.setName(row.getCell(11).getStringCellValue());
-				project.setUnit(row.getCell(12).getStringCellValue());
-				project.setLocation(row.getCell(13).getStringCellValue());
-				project.setCustomer(row.getCell(14).getStringCellValue());
-				project = projectRepository.save(project);
-				
-				// Create user details with reference to above user and project
+				// Create user details with above user and hr project
 				UserDetails userDetails = new UserDetails();
 				userDetails.setEmployeedId(Integer.parseInt(fmt.formatCellValue(row.getCell(3))));
 				userDetails.setName(row.getCell(4).getStringCellValue());
@@ -91,7 +115,8 @@ public class InitialDataController {
 			
 			workbook.close();
 			
-			return "redirect:/";
+			model.addAttribute("jwtToken", token);
+			return "redirect:/hr?authorization=Bearer%20"+token;
 		} catch (IOException e) {
 			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
 	    }

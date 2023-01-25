@@ -7,4 +7,5 @@ import com.application.entity.Project;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
+	Project findByName(String name);
 }

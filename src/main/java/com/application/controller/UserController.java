@@ -32,13 +32,4 @@ public class UserController {
 		model.addAttribute("jwtToken", headerAuth.substring(7, headerAuth.length()));
 		return "employee";
 	}
-	
-	@GetMapping("/hr")
-	@PreAuthorize("hasRole('HR')")
-	public String hr(HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
-
-		model.addAttribute("jwtToken", headerAuth.substring(7, headerAuth.length()));
-		return "hr";
-	}
 }
