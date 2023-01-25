@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +27,9 @@ import com.application.repository.UserRepository;
 
 @Controller
 public class InitialDataController {
+	@Autowired
+	PasswordEncoder passwordEncoder;
+	
 	@Autowired
 	UserRepository userRepository;
 	
@@ -57,7 +61,7 @@ public class InitialDataController {
 				User user = new User();
 				user.setUsername(row.getCell(0).getStringCellValue());
 				user.setEmail(row.getCell(1).getStringCellValue());
-				user.setPassword(row.getCell(2).getStringCellValue());
+				user.setPassword(passwordEncoder.encode(row.getCell(2).getStringCellValue()));
 				user.setRole(Role.ROLE_HR);
 				user = userRepository.save(user);
 				
@@ -84,7 +88,7 @@ public class InitialDataController {
 			
 			workbook.close();
 			
-			return "index";
+			return "redirect:/";
 		} catch (IOException e) {
 			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
 	    }
