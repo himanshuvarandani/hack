@@ -1,5 +1,6 @@
 package com.application.controller;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,11 @@ public class EmployeeController {
 		UserDetails employeeDetails = userDetailsRepository.findByUser(employee.get());
 		Project project = employeeDetails.getProject();
 		
+		// Get hr details for this project
+		List<UserDetails> hrDetails = userDetailsRepository.findByProject(project);
+		
 		model.addAttribute("project", project);
+		model.addAttribute("hrDetails", hrDetails.get(0));
 		model.addAttribute("jwtToken", token);
 		return "employee";
 	}
