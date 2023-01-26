@@ -12,6 +12,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,7 +46,7 @@ public class InitialDataController {
 	}
 	
 	@PostMapping("/initialize-data")
-	public String postInitializeData(@RequestParam MultipartFile file) {
+	public String postInitializeData(@RequestParam MultipartFile file, Model model) {
 		try {
 			Workbook workbook = new XSSFWorkbook(file.getInputStream());
 			
@@ -93,7 +94,8 @@ public class InitialDataController {
 			
 			return "redirect:/";
 		} catch (IOException e) {
-			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+			model.addAttribute("error", "Fail to parse Excel file: "+e.getMessage());
+			return "error";
 	    }
 	}
 }

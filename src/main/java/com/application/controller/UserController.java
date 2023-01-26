@@ -10,7 +10,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.application.entity.Qualification;
 import com.application.entity.User;
@@ -150,12 +149,14 @@ public class UserController {
 		// Fetch qualification and save after validating
 		Optional<Qualification> qualificationRef = qualificationRepository.findById(qualiicationId);
 		if (qualificationRef.isEmpty()) {
-			return "redirect:/error";
+			model.addAttribute("error", "Wrong Qualification Id");
+			return "error";
 		}
 		
 		Qualification qualification = qualificationRef.get();
 		if (qualification.getUserDetails() != userDetails) {
-			return "redirect:/error";
+			model.addAttribute("error", "Forbidden, Don't have rights");
+			return "error";
 		}
 		
 		qualification.setDegree(qualificationBody.getDegree());

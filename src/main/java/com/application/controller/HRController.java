@@ -160,7 +160,8 @@ public class HRController {
 			model.addAttribute("jwtToken", token);
 			return "redirect:/hr?authorization=Bearer%20"+token;
 		} catch (IOException e) {
-			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+			model.addAttribute("error", "Fail to parse Excel file: "+e.getMessage());
+			return "error";
 	    }
 	}
 	

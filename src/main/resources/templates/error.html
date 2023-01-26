@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>HACK Error Page</title>
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/layout.css}">
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+	</head>
+	<body>
+		<header>
+			<th:block th:include="fragments/layout :: header" />
+		</header>
+        <div class="main-content">
+			<div class="main-image">
+				<img th:src="@{/images/HACK_image1.png}" />
+			</div>
+			<div style="text-align: center; margin: 20px;">
+				<h1 th:text="'Error: ' + ${error}"></h1>
+			</div>
+        </div>
+        <footer>
+			<th:block th:include="fragments/layout :: footer" />
+        </footer>
+	</body>
+</html>
