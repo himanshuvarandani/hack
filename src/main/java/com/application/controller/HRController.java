@@ -3,6 +3,7 @@ package com.application.controller;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -161,5 +162,24 @@ public class HRController {
 		} catch (IOException e) {
 			throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
 	    }
+	}
+	
+	@GetMapping("/project/employees")
+	public String employees(HttpServletRequest request, Model model) {
+		String headerAuth = request.getParameter("authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+
+		// Get Project for current hr
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> hr = userRepository.findByUsername(username);
+		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
+		Project project = hrDetails.getProject();
+		
+		// Get all employees in this project
+		List<UserDetails> employees = userDetailsRepository.findByProject(project);
+		
+		model.addAttribute("employees", employees);
+		model.addAttribute("jwtToken", token);
+		return "projectEmployees";
 	}
 }

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>HACK</title>
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/layout.css}">
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/employees.css}">
+	</head>
+	<body>
+		<header>
+			<th:block th:include="fragments/layout :: header" />
+		</header>
+        <div class="main-content">
+			<div class="main-image">
+				<img th:src="@{/images/HACK_image1.png}" />
+			</div>
+			<div class="details">
+				<h2 class="heading">Project Employees</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>Employee Id</th>
+							<th>Name</th>
+							<th>Contact</th>
+							<th>Address</th>
+							<th>Joining Date</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="employee : ${employees}">
+							<td th:text="${employee.employeedId}"></td>
+							<td th:text="${employee.name}"></td>
+							<td th:text="${employee.contact}"></td>
+							<td th:text="${employee.address}"></td>
+							<td th:text="${employee.joiningDate}"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+        </div>
+        <footer>
+			<th:block th:include="fragments/layout :: footer" />
+        </footer>
+	</body>
+</html>

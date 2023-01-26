@@ -1,0 +1,28 @@
+.main-image {
+	display: flex;
+	justify-content: center;
+}
+
+.main-image img {
+	max-height: 30%;
+	max-width: 90%;
+	border-radius: 20px;
+}
+
+.details {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 40px;
+}
+
+.heading {
+	margin-bottom: 30px;
+}
+
+table th, table td {
+	text-align: center;
+	padding: 10px 30px;
+	margin: 0px;
+	border: 1px solid #7286D3;
+}
