@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>HACK</title>
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/layout.css}">
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/profile.css}">
+	</head>
+	<body>
+		<header>
+			<th:block th:include="fragments/layout :: header" />
+		</header>
+        <div class="main-content">
+        	<div class="profile">
+				<h1>Profile</h1>
+				<div class="profile-head">
+					<div class="image">
+						<img th:src="@{/images/HACK_profile.jpg}" />
+					</div>
+					<div>
+						<h2 th:text="${userDetails.name}"></h2>
+						<p th:text="${email}"></p>
+						<p th:text="'Employee Id: ' + ${userDetails.employeedId}"></p>
+					</div>
+				</div>
+				<div class="profile-details">
+					<div class="row">
+						<h4>Contact</h4>
+						<p th:text="${userDetails.contact}"></p>
+					</div>
+					<div class="row">
+						<h4>Emegency Contact</h4>
+						<p th:text="${userDetails.emergencyContact}"></p>
+					</div>
+					<div class="row">
+						<h4>Date Of Birth</h4>
+						<p th:text="${userDetails.dateOfBirth}"></p>
+					</div>
+					<div class="row">
+						<h4>Blood Group</h4>
+						<p th:text="${userDetails.bloodGroup}"></p>
+					</div>
+					<div class="row">
+						<h4>Address</h4>
+						<p th:text="${userDetails.address}"></p>
+					</div>
+					<div class="row">
+						<h4>Date Of Joining</h4>
+						<p th:text="${userDetails.joiningDate}"></p>
+					</div>
+				</div>
+				<div class="qualifications">
+					<h4>Qualifications</h4>
+					<p
+						class="no-qualification"
+						th:if="${#lists.isEmpty(userDetails.qualifications)}"
+					>No qualifications added</p>
+					<div
+						th:unless="${#lists.isEmpty(userDetails.qualifications)}"
+						th:each="qualification : ${userDetails.qualifications}"
+						class="qualification"
+					>
+						<div class="head">
+							<b th:text="${qualification.degree}"></b>
+							<img th:src="@{/images/Edit.png}" />
+						</div>
+						<p th:text="${qualification.college}"></p>
+						<p th:text="${qualification.stream}"></p>
+						<p th:text="${qualification.session}"></p>
+						<p th:text="${qualification.marks} + '%'"></p>
+					</div>
+				</div>
+        	</div>
+        </div>
+        <footer>
+			<th:block th:include="fragments/layout :: footer" />
+        </footer>
+	</body>
+</html>

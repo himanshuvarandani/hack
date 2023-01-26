@@ -1,0 +1,91 @@
+.main-content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.profile {
+	width: 80%;
+}
+
+.profile h1 {
+	text-align: center;
+	margin-bottom: 60px;
+}
+
+.profile-head {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	margin: 20px;
+	margin-bottom: 30px;
+}
+
+.profile-head div {
+	width: 45%;
+}
+
+.profile-head .image {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.profile-head img {
+	width: 85px;
+	height: 80px;
+	border-radius: 50%;
+}
+
+.profile-head h2, .profile-head p {
+	margin-bottom: 10px;
+}
+
+.profile-details {
+	margin-bottom: 20px;
+}
+
+.profile-details .row {
+	display: flex;
+	justify-content: space-around;
+	margin-bottom: 10px;
+}
+
+.profile-details .row h4 {
+	width: 45%;
+	text-align: end;
+}
+
+.profile-details .row p {
+	width: 45%;
+}
+
+.qualifications h4 {
+	margin-left: 10%;
+}
+
+.no-qualification {
+	text-align: center;
+}
+
+.qualification {
+	background-color: #7286D3;
+	border-radius: 10px;
+	margin: 30px 15%;
+	padding: 15px 40px;
+}
+
+.qualification .head {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.qualification img {
+	width: 20px;
+	height: 20px;
+}
+
+.qualification p {
+	margin-bottom: 5px;
+}
