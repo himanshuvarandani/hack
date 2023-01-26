@@ -54,12 +54,20 @@ public class HRController {
 	@GetMapping(value={"", "/"})
 	public String hr(HttpServletRequest request, Model model) {
 		String headerAuth = request.getParameter("authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
 
-		model.addAttribute("jwtToken", headerAuth.substring(7, headerAuth.length()));
+		// Get Project for current hr
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> hr = userRepository.findByUsername(username);
+		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
+		Project project = hrDetails.getProject();
+		
+		model.addAttribute("project", project);
+		model.addAttribute("jwtToken", token);
 		return "hr";
 	}
 	
-	@GetMapping("/add-employees")
+	@GetMapping("/project/add-employees")
 	public String addEmployees(HttpServletRequest request, Model model) {
 		String headerAuth = request.getParameter("authorization");
 
@@ -67,7 +75,7 @@ public class HRController {
 		return "addEmployees";
 	}
 	
-	@PostMapping("/add-employees")
+	@PostMapping("/project/add-employees")
 	public String postAddEmployees(@RequestParam MultipartFile file, HttpServletRequest request, Model model) {
 		String headerAuth = request.getParameter("authorization");
 		String token = headerAuth.substring(7, headerAuth.length());

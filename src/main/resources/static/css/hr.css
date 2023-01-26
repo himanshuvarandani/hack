@@ -1,0 +1,87 @@
+.main-image {
+	display: flex;
+	justify-content: center;
+}
+
+.main-image img {
+	max-height: 30%;
+	max-width: 90%;
+	border-radius: 20px;
+}
+
+.hr-details {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 30px;
+}
+
+.project {
+	width: 80%;
+}
+
+.project-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 20px;
+}
+
+.project-details {
+	margin-bottom: 20px;
+}
+
+.row {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.project-details .row h4, .project-form .row p {
+	width: 45%;
+	text-align: end;
+}
+
+.project-details .row p {
+	width: 45%;
+}
+
+.row .input-div {
+	width: 45%;
+}
+
+.row input {
+	width: 50%;
+	padding: 10px;
+	border: 1px solid #7286D3;
+	border-radius: 10px;
+	box-sizing:border-box;
+}
+
+.submit-button {
+	display: flex;
+	justify-content: center;
+}
+
+input[type="submit"] {
+	font-size: 1.1rem;
+	padding: 15px 30px;
+	background-color: #7286D3;
+	border: 0;
+	border-radius: 10px;
+	box-sizing: border-box;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.hr-links {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.hr-links a {
+	margin-top: 10px;
+}

@@ -16,7 +16,7 @@
 			<div class="form">
 				<h1>Add New Project Employees</h1>
 				<form
-					th:action="@{'/hr/add-employees?authorization=Bearer%20' + ${jwtToken}}"
+					th:action="@{'/hr/project/add-employees?authorization=Bearer%20' + ${jwtToken}}"
 					method="POST"
 					enctype="multipart/form-data"
 				>
