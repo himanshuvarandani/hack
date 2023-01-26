@@ -12,6 +12,9 @@
         <div class="main-content">
         	<div class="profile">
 				<h1>Profile</h1>
+				<div class="edit-profile">
+					<a th:href="@{'/edit-profile?authorization=Bearer%20' + ${jwtToken}}">Edit Profile</a>
+				</div>
 				<div class="profile-head">
 					<div class="image">
 						<img th:src="@{/images/HACK_profile.jpg}" />
@@ -49,24 +52,35 @@
 					</div>
 				</div>
 				<div class="qualifications">
-					<h4>Qualifications</h4>
+					<div class="heading-group">
+						<h4>Qualifications</h4>
+						<a
+							th:href="@{'/edit-profile?authorization=Bearer%20' + ${jwtToken}} + '#new-qualification-form'"
+						>
+							Add New Qualification
+						</a>
+					</div>
 					<p
 						class="no-qualification"
 						th:if="${#lists.isEmpty(userDetails.qualifications)}"
 					>No qualifications added</p>
 					<div
 						th:unless="${#lists.isEmpty(userDetails.qualifications)}"
-						th:each="qualification : ${userDetails.qualifications}"
+						th:each="qualification,iter : ${userDetails.qualifications}"
 						class="qualification"
 					>
 						<div class="head">
 							<b th:text="${qualification.degree}"></b>
-							<img th:src="@{/images/Edit.png}" />
+							<a
+								th:href="@{'/edit-profile?authorization=Bearer%20' + ${jwtToken}} + '#Qualification-' +${iter.count}"
+							>
+								<img th:src="@{/images/Edit.png}" />
+							</a>
 						</div>
 						<p th:text="${qualification.college}"></p>
 						<p th:text="${qualification.stream}"></p>
 						<p th:text="${qualification.session}"></p>
-						<p th:text="${qualification.marks} + '%'"></p>
+						<p th:text="${qualification.marks}"></p>
 					</div>
 				</div>
         	</div>

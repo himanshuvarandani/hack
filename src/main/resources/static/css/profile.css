@@ -10,6 +10,11 @@
 
 .profile h1 {
 	text-align: center;
+}
+
+.edit-profile {
+	padding-right: 10%;
+	text-align: end;
 	margin-bottom: 60px;
 }
 
@@ -44,13 +49,14 @@
 	margin-bottom: 20px;
 }
 
-.profile-details .row {
+.row {
 	display: flex;
 	justify-content: space-around;
-	margin-bottom: 10px;
+	align-items: center;
+	margin-bottom: 20px;
 }
 
-.profile-details .row h4 {
+.profile-details .row h4, .qualification-form .row p {
 	width: 45%;
 	text-align: end;
 }
@@ -59,8 +65,42 @@
 	width: 45%;
 }
 
-.qualifications h4 {
-	margin-left: 10%;
+.row .input-div {
+	width: 45%;
+}
+
+.row input {
+	width: 50%;
+	padding: 10px;
+	border: 1px solid #7286D3;
+	border-radius: 10px;
+	box-sizing:border-box;
+}
+
+.submit-button {
+	display: flex;
+	justify-content: center;
+}
+
+input[type="submit"] {
+	font-size: 1.1rem;
+	padding: 15px 30px;
+	background-color: #7286D3;
+	border: 0;
+	border-radius: 10px;
+	box-sizing: border-box;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.qualifications .heading-group {
+	display: flex;
+	justify-content: space-between;
+	margin: 40px 10% 20px 10%;
+}
+
+.qualifications .heading {
+	margin: 40px 10% 20px 10%;
 }
 
 .no-qualification {
@@ -88,4 +128,14 @@
 
 .qualification p {
 	margin-bottom: 5px;
+}
+
+.qualification-form {
+	margin-bottom: 20px;
+}
+
+.qualification-form h5 {
+	text-align: center;
+	font-size: 1.1rem;
+	margin-bottom: 15px;
 }

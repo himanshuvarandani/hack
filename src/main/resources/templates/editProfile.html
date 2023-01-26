@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>HACK</title>
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/layout.css}">
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/profile.css}">
+	</head>
+	<body>
+		<header>
+			<th:block th:include="fragments/layout :: header" />
+		</header>
+        <div class="main-content">
+        	<div class="profile">
+				<h1>Edit Profile</h1>
+				<div class="profile-head">
+					<div class="image">
+						<img th:src="@{/images/HACK_profile.jpg}" />
+					</div>
+					<div>
+						<h2 th:text="${userDetails.name}"></h2>
+						<p th:text="${email}"></p>
+						<p th:text="'Employee Id: ' + ${userDetails.employeedId}"></p>
+					</div>
+				</div>
+				<form
+					th:action="@{'/edit-profile?authorization=Bearer%20' + ${jwtToken}}"
+					method="POST"
+					class="profile-details"
+				>
+					<div class="row">
+						<h4>Contact</h4>
+						<div class="input-div">
+							<input
+								type="text"
+								name="Contact"
+								placeholder="Contact"
+								th:value="${userDetails.contact}"
+								required
+							/>
+						</div>
+					</div>
+					<div class="row">
+						<h4>Emegency Contact</h4>
+						<div class="input-div">
+							<input
+								type="text"
+								name="emergencyContact"
+								placeholder="Emergency Contact"
+								th:value="${userDetails.emergencyContact}"
+								required
+							/>
+						</div>
+					</div>
+					<div class="row">
+						<h4>Date Of Birth</h4>
+						<div class="input-div">
+							<input
+								type="text"
+								name="dateOfBirth"
+								placeholder="Date Of Birth"
+								th:value="${userDetails.dateOfBirth}"
+								required
+							/>
+						</div>
+					</div>
+					<div class="row">
+						<h4>Blood Group</h4>
+						<div class="input-div">
+							<input
+								type="text"
+								name="bloodGroup"
+								placeholder="Blood Group"
+								th:value="${userDetails.bloodGroup}"
+								required
+							/>
+						</div>
+					</div>
+					<div class="row">
+						<h4>Address</h4>
+						<div class="input-div">
+							<input
+								type="text"
+								name="address"
+								placeholder="Address"
+								th:value="${userDetails.address}"
+								required
+							/>
+						</div>
+					</div>
+					<div class="row">
+						<h4>Date Of Joining</h4>
+						<div class="input-div">
+							<input
+								type="text"
+								name="joiningDate"
+								placeholder="Joining Date"
+								th:value="${userDetails.joiningDate}"
+								required
+							/>
+						</div>
+					</div>
+					<div class="submit-button">
+						<input type="submit" />
+					</div>
+				</form>
+				<div class="qualifications">
+					<h4 class="heading">Qualifications</h4>
+					<div
+						th:if="${not #lists.isEmpty(userDetails.qualifications)}"
+						th:each="qualification,iter : ${userDetails.qualifications}"
+					>
+						<form
+							th:action="@{'/edit-qualification/' + ${qualification.id} + '?authorization=Bearer%20' + ${jwtToken}}"
+							method="POST"
+							class="qualification-form"
+							th:id="'Qualification-' +${iter.count}"
+						>
+							<h5 th:text="'Qualification ' +${iter.count}"></h5>
+							<div class="row">
+								<p>Degree Name</p>
+								<div class="input-div">
+									<input
+										type="text"
+										name="degree"
+										placeholder="Degree"
+										th:value="${qualification.degree}"
+										required
+									/>
+								</div>
+							</div>
+							<div class="row">
+								<p>College</p>
+								<div class="input-div">
+									<input
+										type="text"
+										name="college"
+										placeholder="College"
+										th:value="${qualification.college}"
+										required
+									/>
+								</div>
+							</div>
+							<div class="row">
+								<p>Stream</p>
+								<div class="input-div">
+									<input
+										type="text"
+										name="stream"
+										placeholder="Stream"
+										th:value="${qualification.stream}"
+										required
+									/>
+								</div>
+							</div>
+							<div class="row">
+								<p>Session</p>
+								<div class="input-div">
+									<input
+										type="text"
+										name="session"
+										placeholder="Session"
+										th:value="${qualification.session}"
+										required
+									/>
+								</div>
+							</div>
+							<div class="row">
+								<p>Marks (write criteria, exa. '7 CGPA' or '7%')</p>
+								<div class="input-div">
+									<input
+										type="text"
+										name="marks"
+										placeholder="Marks (write criteria, exa. '7 CGPA' or '7%')"
+										th:value="${qualification.marks}"
+										required
+									/>
+								</div>
+							</div>
+							<div class="submit-button">
+								<input type="submit" />
+							</div>
+						</form>
+					</div>
+					<form
+						th:action="@{'/add-qualification?authorization=Bearer%20' + ${jwtToken}}"
+						method="POST"
+						class="qualification-form"
+						id="new-qualification-form"
+					>
+						<h5>Add New Qualification</h5>
+						<div class="row">
+							<p>Degree Name</p>
+							<div class="input-div">
+								<input
+									type="text"
+									name="degree"
+									placeholder="Degree"
+									required
+								/>
+							</div>
+						</div>
+						<div class="row">
+							<p>College</p>
+							<div class="input-div">
+								<input
+									type="text"
+									name="college"
+									placeholder="College"
+									required
+								/>
+							</div>
+						</div>
+						<div class="row">
+							<p>Stream</p>
+							<div class="input-div">
+								<input
+									type="text"
+									name="stream"
+									placeholder="Stream"
+									required
+								/>
+							</div>
+						</div>
+						<div class="row">
+							<p>Session</p>
+							<div class="input-div">
+								<input
+									type="text"
+									name="session"
+									placeholder="Session"
+									required
+								/>
+							</div>
+						</div>
+						<div class="row">
+							<p>Marks (write criteria, exa. '7 CGPA' or '7%')</p>
+							<div class="input-div">
+								<input
+									type="text"
+									name="marks"
+									placeholder="Marks (write criteria, exa. '7 CGPA' or '7%')"
+									required
+								/>
+							</div>
+						</div>
+						<div class="submit-button">
+							<input type="submit" />
+						</div>
+					</form>
+				</div>
+        	</div>
+        </div>
+        <footer>
+			<th:block th:include="fragments/layout :: footer" />
+        </footer>
+	</body>
+</html>

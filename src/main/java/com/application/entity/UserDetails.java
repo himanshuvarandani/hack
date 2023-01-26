@@ -35,7 +35,7 @@ public class UserDetails {
 	
 	private Date joiningDate;
 	
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(cascade=CascadeType.ALL, mappedBy="userDetails", fetch=FetchType.EAGER)
 	private List<Qualification> qualifications;
 	
 	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
