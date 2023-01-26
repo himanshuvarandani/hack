@@ -67,6 +67,39 @@ public class HRController {
 		return "hr";
 	}
 	
+	@GetMapping("/edit-project")
+	public String editProject(HttpServletRequest request, Model model) {
+		String headerAuth = request.getParameter("authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+		
+		// Get Project for current hr
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> hr = userRepository.findByUsername(username);
+		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
+		Project project = hrDetails.getProject();
+
+		model.addAttribute("project", project);
+		model.addAttribute("jwtToken", token);
+		return "editProject";
+	}
+
+	@PostMapping("/edit-project")
+	public String postEditProject(String location, HttpServletRequest request, Model model) {
+		String headerAuth = request.getParameter("authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+		
+		// Get Project for current hr
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> hr = userRepository.findByUsername(username);
+		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
+		Project project = hrDetails.getProject();
+		
+		project.setLocation(location);
+		projectRepository.save(project);
+		
+		return "redirect:/hr?authorization=Bearer%20"+token;
+	}
+	
 	@GetMapping("/project/add-employees")
 	public String addEmployees(HttpServletRequest request, Model model) {
 		String headerAuth = request.getParameter("authorization");
