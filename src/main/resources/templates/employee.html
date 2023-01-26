@@ -3,7 +3,7 @@
 	<head>
 	    <title>HACK</title>
 	    <link rel="stylesheet" type="text/css" th:href="@{/css/layout.css}">
-	    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}">
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/portal.css}">
 	</head>
 	<body>
 		<header>
@@ -13,20 +13,28 @@
 			<div class="main-image">
 				<img th:src="@{/images/HACK_image1.png}" />
 			</div>
-			<div id="about">
-				<h1>Employee</h1>
-				<p>
-					Lorem Ipsum is simply dummy text of the printing and
-					typesetting industry. Lorem Ipsum has been the industry's 
-					standard dummy text ever since the 1500s,when an unknown
-					printer took a galley of type and scrambled it to make a type
-					specimen book. It has survived not only five centuries, but
-					also the leap into electronic typesetting,remaining essentially
-					unchanged. It was popularised in the 1960s with the release of
-					Letraset sheets containing Lorem Ipsum passages, and more
-					recently with desktop publishing software like Aldus PageMaker
-					including versions of Lorem Ipsum.
-				</p>
+			<div class="details">
+				<div class="project">
+					<h2 class="heading">Project Details</h2>
+					<div class="project-details">
+						<div class="row">
+							<h4>Project Name</h4>
+							<p th:text="${project.name}"></p>
+						</div>
+						<div class="row">
+							<h4>Project Unit</h4>
+							<p th:text="${project.unit}"></p>
+						</div>
+						<div class="row">
+							<h4>Location</h4>
+							<p th:text="${project.location}"></p>
+						</div>
+						<div class="row">
+							<h4>Customer</h4>
+							<p th:text="${project.customer}"></p>
+						</div>
+					</div>
+				</div>
 			</div>
         </div>
         <footer>

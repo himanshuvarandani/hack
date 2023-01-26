@@ -168,13 +168,4 @@ public class UserController {
 		
 		return "redirect:/profile?authorization=Bearer%20"+token;
 	}
-	
-	@GetMapping("/employee")
-	@PreAuthorize("hasRole('EMPLOYEE')")
-	public String employee(HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
-
-		model.addAttribute("jwtToken", headerAuth.substring(7, headerAuth.length()));
-		return "employee";
-	}
 }
