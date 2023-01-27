@@ -3,6 +3,7 @@ package com.application.controller;
 import java.io.IOException;
 import java.sql.Date;
 import java.util.Iterator;
+import java.util.Optional;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -10,11 +11,13 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,9 +28,14 @@ import com.application.entity.UserDetails;
 import com.application.repository.ProjectRepository;
 import com.application.repository.UserDetailsRepository;
 import com.application.repository.UserRepository;
+import com.application.security.jwt.JwtUtils;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class InitialDataController {
+@RequestMapping("/admin")
+@PreAuthorize("hasRole('ADMIN')")
+public class AdminController {
 	@Autowired
 	PasswordEncoder passwordEncoder;
 	
@@ -40,13 +48,35 @@ public class InitialDataController {
 	@Autowired
 	UserDetailsRepository userDetailsRepository;
 	
+	@Autowired
+	JwtUtils jwtUtils;
+	
 	@GetMapping("/initialize-data")
-	public String initializeData() {
+	public String initializeData( HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+
+		// Get user details from token
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> currentUser = userRepository.findByUsername(username);
+		
+		model.addAttribute("role", currentUser.get().getRole().name());
+		model.addAttribute("jwtToken", token);
 		return "initializeData";
 	}
 	
 	@PostMapping("/initialize-data")
-	public String postInitializeData(@RequestParam MultipartFile file, Model model) {
+	public String postInitializeData(@RequestParam MultipartFile file, HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+
+		// Get user details from token
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> currentUser = userRepository.findByUsername(username);
+		
+		model.addAttribute("role", currentUser.get().getRole().name());
+		model.addAttribute("jwtToken", token);
+		
 		try {
 			Workbook workbook = new XSSFWorkbook(file.getInputStream());
 			

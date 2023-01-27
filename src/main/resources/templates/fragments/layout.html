@@ -17,7 +17,10 @@
 			<div th:unless="${jwtToken==null}" class="right-content">
 				<a th:if="${role} == 'ROLE_HR'" href="/hr"><h2>HR</h2></a>
 				<a th:if="${role} == 'ROLE_EMPLOYEE'" href="/employee"><h2>Employee</h2></a>
-				<a href="/profile"><h2>Profile</h2></a>
+				<a th:if="${role} == 'ROLE_ADMIN'" href="/admin/initialize-data">
+					<h2>Initialize Data</h2>
+				</a>
+				<a th:unless="${role} == 'ROLE_ADMIN'" href="/profile"><h2>Profile</h2></a>
 				<a href="/auth/signout"><h2>Logout</h2></a>
 			</div>
         </header>

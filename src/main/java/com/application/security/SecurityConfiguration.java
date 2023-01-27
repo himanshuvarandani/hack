@@ -64,6 +64,7 @@ public class SecurityConfiguration {
 	        .requestMatchers("/initialize-data").permitAll()
 	        .requestMatchers("/").permitAll()
 	        .requestMatchers("/signin").permitAll()
+	        .requestMatchers("/admin/**").hasRole("ADMIN")
 	        .requestMatchers("/hr/**").hasRole("HR")
 	        .requestMatchers("/employee/**").hasRole("EMPLOYEE")
 	        .anyRequest().authenticated();

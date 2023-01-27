@@ -33,9 +33,6 @@ public class AuthController {
 	UserRepository userRepository;
 
 	@Autowired
-	PasswordEncoder encoder;
-
-	@Autowired
 	JwtUtils jwtUtils;
 	
 	@PostMapping("/signin")
@@ -63,7 +60,9 @@ public class AuthController {
 		model.addAttribute("jwtToken", jwt);
 		if (roles.get(0)==Role.ROLE_HR.name())
 			return "redirect:/hr";
-		return "redirect:/employee";
+		if (roles.get(0)==Role.ROLE_EMPLOYEE.name())
+			return "redirect:/employee";
+		return "redirect:/";
 	}
 	
 	@GetMapping("/signout")
