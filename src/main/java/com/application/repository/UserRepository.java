@@ -10,6 +10,8 @@ import com.application.entity.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 	Optional<User> findByUsername(String username);
+	
+	Optional<User> findByUsernameAndEmail(String username, String email);
 
 	Boolean existsByUsername(String username);
 

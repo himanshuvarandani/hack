@@ -1,6 +1,7 @@
 package com.application.controller;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.application.entity.Role;
+import com.application.entity.User;
 import com.application.repository.UserRepository;
 import com.application.security.jwt.JwtUtils;
 import com.application.security.services.UserDetailsImpl;
@@ -33,6 +35,9 @@ public class AuthController {
 	UserRepository userRepository;
 
 	@Autowired
+	PasswordEncoder passwordEncoder;
+	
+	@Autowired
 	JwtUtils jwtUtils;
 	
 	@PostMapping("/signin")
@@ -42,7 +47,6 @@ public class AuthController {
 		HttpServletRequest request,
 		Model model
 	) {
-
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(username, password));
 
@@ -62,6 +66,37 @@ public class AuthController {
 			return "redirect:/hr";
 		if (roles.get(0)==Role.ROLE_EMPLOYEE.name())
 			return "redirect:/employee";
+		return "redirect:/";
+	}
+	
+	@GetMapping("/reset-password")
+	public String resetPassword() {
+		return "resetPassword";
+	}
+	
+
+	@PostMapping("/reset-password")
+	public String resetPassword(
+		@RequestParam String username,
+		@RequestParam String email,
+		@RequestParam String password,
+		HttpServletRequest request,
+		Model model
+	) {
+		// Need to add email verification by otp 
+		
+		Optional<User> userRef = userRepository.findByUsernameAndEmail(username, email);
+		
+		if (userRef.isEmpty()) {
+			model.addAttribute("error", "User not found");
+			return "redirect:/error";
+		}
+		
+		User user = userRef.get();
+		
+		user.setPassword(passwordEncoder.encode(password));
+		userRepository.save(user);
+		
 		return "redirect:/";
 	}
 	
