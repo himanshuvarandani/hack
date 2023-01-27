@@ -22,10 +22,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.application.entity.DailyUpdate;
 import com.application.entity.Project;
 import com.application.entity.Role;
 import com.application.entity.User;
 import com.application.entity.UserDetails;
+import com.application.repository.DailyUpdatesRepository;
 import com.application.repository.ProjectRepository;
 import com.application.repository.UserDetailsRepository;
 import com.application.repository.UserRepository;
@@ -48,6 +50,9 @@ public class HRController {
 	
 	@Autowired
 	UserDetailsRepository userDetailsRepository;
+
+	@Autowired
+	DailyUpdatesRepository dailyUpdatesRepository;
 	
 	@Autowired
 	JwtUtils jwtUtils;
@@ -59,11 +64,29 @@ public class HRController {
 
 		// Get Project for current hr
 		String username = jwtUtils.getUserNameFromJwtToken(token);
-		Optional<User> hr = userRepository.findByUsername(username);
-		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
+		Optional<User> hrRef = userRepository.findByUsername(username);
+		User hr = hrRef.get();
+		UserDetails hrDetails = userDetailsRepository.findByUser(hr);
 		Project project = hrDetails.getProject();
 		
-		model.addAttribute("role", hr.get().getRole().name());
+		// Check for todays update
+		Optional<DailyUpdate> dailyUpdate = dailyUpdatesRepository.findByUserAndDate(
+				hr,
+				new Date(new java.util.Date().getTime())
+		);
+		
+		if (dailyUpdate.isEmpty()) {
+			model.addAttribute("dailyUpdate", null);
+		} else {
+			model.addAttribute("dailyUpdate", dailyUpdate.get());
+		}
+		
+		
+		// Give all updates
+		List<DailyUpdate> dailyUpdates = dailyUpdatesRepository.findByUser(hr);
+		
+		model.addAttribute("dailyUpdates", dailyUpdates);
+		model.addAttribute("role", hr.getRole().name());
 		model.addAttribute("project", project);
 		model.addAttribute("jwtToken", token);
 		return "hr";

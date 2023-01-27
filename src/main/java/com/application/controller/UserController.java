@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import com.application.entity.DailyUpdate;
 import com.application.entity.Qualification;
+import com.application.entity.Role;
 import com.application.entity.User;
 import com.application.entity.UserDetails;
 import com.application.repository.DailyUpdatesRepository;
@@ -239,7 +240,8 @@ public class UserController {
 			dailyUpdate.setDuration(duration);
 			dailyUpdatesRepository.save(dailyUpdate);
 		}
-		
+		if (user.getRole()==Role.ROLE_HR)
+			return "redirect:/hr";
 		return "redirect:/employee";
 	}
 }

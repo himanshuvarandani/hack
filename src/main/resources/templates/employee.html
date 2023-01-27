@@ -48,7 +48,10 @@
 						</div>
 					</div>
 				</div>
-				<div class="daily-updates">
+				<div
+					th:if="${not #lists.isEmpty(dailyUpdates)}"
+					class="daily-updates"
+				>
 					<h2 class="heading">Daily Updates</h2>
 					<table>
 						<thead>

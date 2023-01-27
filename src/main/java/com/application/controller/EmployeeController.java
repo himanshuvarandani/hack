@@ -58,7 +58,7 @@ public class EmployeeController {
 		UserDetails employeeDetails = userDetailsRepository.findByUser(employee);
 		Project project = employeeDetails.getProject();
 		
-		// Get hr details for this project
+		// Get employee details for this project
 		List<UserDetails> hrDetails = userDetailsRepository.findByProject(project);
 		
 		
