@@ -14,28 +14,20 @@
 				<img th:src="@{/images/HACK_image1.png}" />
 			</div>
 			<div class="details">
-				<h2 class="heading">Project Employees</h2>
+				<h2 class="heading" th:text="${employee.username} + ' Employee Updates'"></h2>
 				<table>
 					<thead>
 						<tr>
-							<th>Employee Id</th>
-							<th>Name</th>
-							<th>Contact</th>
-							<th>Address</th>
-							<th>Joining Date</th>
-							<th>Daily Updates</th>
+							<th>Date</th>
+							<th>Description</th>
+							<th>Duration</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="employee : ${employees}">
-							<td th:text="${employee.employeedId}"></td>
-							<td th:text="${employee.name}"></td>
-							<td th:text="${employee.contact}"></td>
-							<td th:text="${employee.address}"></td>
-							<td th:text="${employee.joiningDate}"></td>
-							<td><a th:href="@{'/hr/project/employee/'+${employee.id}}">
-								View
-							</a></td>
+						<tr th:each="update : ${employeeUpdates}">
+							<td th:text="${update.date}"></td>
+							<td th:text="${update.description}"></td>
+							<td th:text="${update.duration}"></td>
 						</tr>
 					</tbody>
 				</table>

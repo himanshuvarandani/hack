@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -209,11 +210,31 @@ public class HRController {
 		Project project = hrDetails.getProject();
 		
 		// Get all employees in this project
-		List<UserDetails> employees = userDetailsRepository.findByProject(project);
+		List<UserDetails> employees = userDetailsRepository.findByProjectAndRole(project, Role.ROLE_EMPLOYEE);
 		
 		model.addAttribute("role", hr.get().getRole().name());
 		model.addAttribute("employees", employees);
 		model.addAttribute("jwtToken", token);
 		return "projectEmployees";
+	}
+	
+	@GetMapping("/project/employee/{employeeId}")
+	public String employeeUpdates(@PathVariable("employeeId") Integer employeeId, HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+
+		// Get Project for current hr
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> hr = userRepository.findByUsername(username);
+		
+		// Fetch employee updates
+		User employee = userRepository.getById(employeeId);
+		List<DailyUpdate> employeeUpdates = dailyUpdatesRepository.findByUser(employee);
+		
+		model.addAttribute("role", hr.get().getRole().name());
+		model.addAttribute("employee", employee);
+		model.addAttribute("employeeUpdates", employeeUpdates);
+		model.addAttribute("jwtToken", token);
+		return "employeeUpdates";
 	}
 }
