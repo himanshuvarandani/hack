@@ -1,5 +1,6 @@
 package com.application.controller;
 
+import java.sql.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.application.entity.DailyUpdate;
 import com.application.entity.Qualification;
 import com.application.entity.User;
 import com.application.entity.UserDetails;
+import com.application.repository.DailyUpdatesRepository;
 import com.application.repository.QualificationRepository;
 import com.application.repository.UserDetailsRepository;
 import com.application.repository.UserRepository;
@@ -33,6 +36,9 @@ public class UserController {
 	
 	@Autowired
 	QualificationRepository qualificationRepository;
+	
+	@Autowired
+	DailyUpdatesRepository dailyUpdatesRepository;
 	
 	@Autowired
 	JwtUtils jwtUtils;
@@ -195,5 +201,45 @@ public class UserController {
 		qualification = qualificationRepository.save(qualification);
 		
 		return "redirect:/profile";
+	}
+	
+	@PostMapping("/daily-update")
+	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
+	public String dailyUpdate(
+			String description,
+			Integer duration,
+			HttpSession session,
+			Model model
+	) {
+		String headerAuth = (String) session.getAttribute("Authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+		
+		// Get user details from token
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> userRef = userRepository.findByUsername(username);
+		User user = userRef.get();
+		
+		Date today = new Date(new java.util.Date().getTime());
+		
+		Optional<DailyUpdate> dailyUpdateRef = dailyUpdatesRepository.findByUserAndDate(
+				user,
+				today
+		);
+		
+		if (dailyUpdateRef.isEmpty()) {
+			DailyUpdate dailyUpdate = new DailyUpdate();
+			dailyUpdate.setDate(today);
+			dailyUpdate.setDescription(description);
+			dailyUpdate.setDuration(duration);
+			dailyUpdate.setUser(user);
+			dailyUpdatesRepository.save(dailyUpdate);
+		} else {
+			DailyUpdate dailyUpdate = dailyUpdateRef.get();
+			dailyUpdate.setDescription(description);
+			dailyUpdate.setDuration(duration);
+			dailyUpdatesRepository.save(dailyUpdate);
+		}
+		
+		return "redirect:/employee";
 	}
 }

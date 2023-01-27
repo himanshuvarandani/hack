@@ -22,7 +22,8 @@
 							<p th:text="${project.name}"></p>
 						</div>
 						<div class="row">
-							<h4>Project Unit</h4>
+							<h4>
+							Project Unit</h4>
 							<p th:text="${project.unit}"></p>
 						</div>
 						<div class="row">
@@ -46,6 +47,59 @@
 							<p th:text="${hrDetails.contact}"></p>
 						</div>
 					</div>
+				</div>
+				<div class="daily-updates">
+					<h2 class="heading">Daily Updates</h2>
+					<table>
+						<thead>
+							<tr>
+								<th>Date</th>
+								<th>Description</th>
+								<th>Duration</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="update : ${dailyUpdates}">
+								<td th:text="${update.date}"></td>
+								<td th:text="${update.description}"></td>
+								<td th:text="${update.duration}"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div th:if="${dailyUpdate} == null" class="daily-update">
+					<h2 class="heading">Give Daily Update</h2>
+					<form
+						action="/daily-update"
+						method="POST"
+						class="daily-update-form"
+					>
+						<div class="row">
+							<h4>Description</h4>
+							<div class="input-div">
+								<input
+									type="text"
+									name="description"
+									placeholder="Description"
+									required
+								/>
+							</div>
+						</div>
+						<div class="row">
+							<h4>Duration (in hours)</h4>
+							<div class="input-div">
+								<input
+									type="number"
+									name="duration"
+									placeholder="Duration (in hours)"
+									required
+								/>
+							</div>
+						</div>
+						<div class="submit-button">
+							<input type="submit" />
+						</div>
+					</form>
 				</div>
 			</div>
         </div>
