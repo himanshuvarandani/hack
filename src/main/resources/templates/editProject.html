@@ -3,7 +3,7 @@
 	<head>
 	    <title>HACK</title>
 	    <link rel="stylesheet" type="text/css" th:href="@{/css/layout.css}">
-	    <link rel="stylesheet" type="text/css" th:href="@{/css/hr.css}">
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/portal.css}">
 	</head>
 	<body>
 		<header>
@@ -13,11 +13,11 @@
 			<div class="main-image">
 				<img th:src="@{/images/HACK_image1.png}" />
 			</div>
-			<div class="hr-details">
+			<div class="details">
 				<div class="project">
 					<h2 class="heading">Edit Project Details</h2>
 					<form
-						th:action="@{'/hr/edit-project?authorization=Bearer%20' + ${jwtToken}}"
+						action="/hr/edit-project"
 						method="POST"
 						class="project-form"
 					>

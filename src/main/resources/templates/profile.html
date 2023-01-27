@@ -13,7 +13,7 @@
         	<div class="profile">
 				<h1>Profile</h1>
 				<div class="edit-profile">
-					<a th:href="@{'/edit-profile?authorization=Bearer%20' + ${jwtToken}}">Edit Profile</a>
+					<a href="/edit-profile">Edit Profile</a>
 				</div>
 				<div class="profile-head">
 					<div class="image">
@@ -54,11 +54,7 @@
 				<div class="qualifications">
 					<div class="heading-group">
 						<h4>Qualifications</h4>
-						<a
-							th:href="@{'/edit-profile?authorization=Bearer%20' + ${jwtToken}} + '#new-qualification-form'"
-						>
-							Add New Qualification
-						</a>
+						<a href="/edit-profile#new-qualification-form">Add New Qualification</a>
 					</div>
 					<p
 						class="no-qualification"
@@ -72,7 +68,7 @@
 						<div class="head">
 							<b th:text="${qualification.degree}"></b>
 							<a
-								th:href="@{'/edit-profile?authorization=Bearer%20' + ${jwtToken}} + '#Qualification-' +${iter.count}"
+								th:href="@{'/edit-profile#Qualification-' + ${iter.count}}"
 							>
 								<img th:src="@{/images/Edit.png}" />
 							</a>

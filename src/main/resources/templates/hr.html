@@ -17,11 +17,7 @@
 				<div class="project">
 					<div class="project-head">
 						<h2>Project Details</h2>
-						<a
-							th:href="@{'/hr/edit-project?authorization=Bearer%20' + ${jwtToken}}"
-						>
-							Edit
-						</a>
+						<a href="/hr/edit-project">Edit</a>
 					</div>
 					<div class="project-details">
 						<div class="row">
@@ -42,16 +38,8 @@
 						</div>
 					</div>
 					<div class="links">
-						<a
-							th:href="@{'/hr/project/employees?authorization=Bearer%20' + ${jwtToken}}"
-						>
-							Project Employees
-						</a>
-						<a
-							th:href="@{'/hr/project/add-employees?authorization=Bearer%20' + ${jwtToken}}"
-						>
-							Add New Employees
-						</a>
+						<a href="/hr/project/employees">Project Employees</a>
+						<a href="/hr/project/add-employees">Add New Employees</a>
 					</div>
 				</div>
 			</div>

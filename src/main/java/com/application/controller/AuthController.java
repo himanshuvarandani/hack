@@ -11,15 +11,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.application.entity.Role;
-import com.application.entity.User;
 import com.application.repository.UserRepository;
 import com.application.security.jwt.JwtUtils;
 import com.application.security.services.UserDetailsImpl;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/auth")
@@ -37,7 +39,12 @@ public class AuthController {
 	JwtUtils jwtUtils;
 	
 	@PostMapping("/signin")
-	public String authenticateUser(@RequestParam String username, @RequestParam String password, Model model) {
+	public String authenticateUser(
+		@RequestParam String username,
+		@RequestParam String password,
+		HttpServletRequest request,
+		Model model
+	) {
 
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(username, password));
@@ -50,9 +57,18 @@ public class AuthController {
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 
+		request.getSession().setMaxInactiveInterval(3600);
+		request.getSession().setAttribute("Authorization", "Bearer "+jwt);
+		
 		model.addAttribute("jwtToken", jwt);
 		if (roles.get(0)==Role.ROLE_HR.name())
-			return "redirect:/hr?authorization=Bearer%20"+jwt;
-		return "redirect:/employee?authorization=Bearer%20"+jwt;
+			return "redirect:/hr";
+		return "redirect:/employee";
+	}
+	
+	@GetMapping("/signout")
+	public String signout(HttpServletRequest request) {
+		request.getSession().invalidate();
+		return "redirect:/";
 	}
 }

@@ -19,7 +19,7 @@ import com.application.repository.UserRepository;
 import com.application.security.jwt.JwtUtils;
 
 import jakarta.persistence.EntityManager;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/employee")
@@ -41,8 +41,8 @@ public class EmployeeController {
 	EntityManager entityManager;
 
 	@GetMapping(value={"", "/"})
-	public String employee(HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String employee(HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 
 		// Get Project for current employee
@@ -54,6 +54,7 @@ public class EmployeeController {
 		// Get hr details for this project
 		List<UserDetails> hrDetails = userDetailsRepository.findByProject(project);
 		
+		model.addAttribute("role", employee.get().getRole().name());
 		model.addAttribute("project", project);
 		model.addAttribute("hrDetails", hrDetails.get(0));
 		model.addAttribute("jwtToken", token);

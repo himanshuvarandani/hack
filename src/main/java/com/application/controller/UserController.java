@@ -21,8 +21,7 @@ import com.application.request.ProfileRequest;
 import com.application.request.QualificationRequest;
 import com.application.security.jwt.JwtUtils;
 
-import jakarta.persistence.EntityManager;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
@@ -38,27 +37,45 @@ public class UserController {
 	@Autowired
 	JwtUtils jwtUtils;
 	
-	@Autowired
-	EntityManager entityManager;
-	
 	@GetMapping("/")
-	public String home(HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String home(HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
 
-		if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer "))
-			model.addAttribute("jwtToken", headerAuth.substring(7, headerAuth.length()));
+		if (
+			StringUtils.hasText(headerAuth) &&
+			headerAuth.startsWith("Bearer ")
+		) {
+			String token = headerAuth.substring(7, headerAuth.length());
+			
+			if (jwtUtils.validateJwtToken(token)) {
+				// Get user from token
+				String username = jwtUtils.getUserNameFromJwtToken(token);
+				Optional<User> user = userRepository.findByUsername(username);
+				
+				model.addAttribute("role", user.get().getRole().name());
+				model.addAttribute("jwtToken", headerAuth.substring(7, headerAuth.length()));
+			}
+		}
 		return "index";
 	}
 	
 	@GetMapping("/signin")
-	public String signin(HttpServletRequest request) {
+	public String signin(HttpSession session) {
+		String headerAuth = (String) session.getAttribute("Authorization");
+		
+		if (
+			StringUtils.hasText(headerAuth) &&
+			headerAuth.startsWith("Bearer ") &&
+			jwtUtils.validateJwtToken(headerAuth.substring(7, headerAuth.length()))
+		)
+			return "redirect:/";
 		return "login";
 	}
 
 	@GetMapping("/profile")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
-	public String profile(HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String profile(HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 		
 		// Get user details from token
@@ -66,6 +83,7 @@ public class UserController {
 		Optional<User> user = userRepository.findByUsername(username);
 		UserDetails userDetails = userDetailsRepository.findByUser(user.get());
 		
+		model.addAttribute("role", user.get().getRole().name());
 		model.addAttribute("email", user.get().getEmail());
 		model.addAttribute("userDetails", userDetails);
 		model.addAttribute("jwtToken", token);
@@ -74,8 +92,8 @@ public class UserController {
 	
 	@GetMapping("/edit-profile")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
-	public String editProfile(HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String editProfile(HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 		
 		// Get user details from token
@@ -83,6 +101,7 @@ public class UserController {
 		Optional<User> user = userRepository.findByUsername(username);
 		UserDetails userDetails = userDetailsRepository.findByUser(user.get());
 		
+		model.addAttribute("role", user.get().getRole().name());
 		model.addAttribute("email", user.get().getEmail());
 		model.addAttribute("userDetails", userDetails);
 		model.addAttribute("jwtToken", token);
@@ -91,8 +110,8 @@ public class UserController {
 	
 	@PostMapping("/edit-profile")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
-	public String postEditProfile(ProfileRequest profile, HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String postEditProfile(ProfileRequest profile, HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 		
 		// Get user details from token
@@ -108,13 +127,13 @@ public class UserController {
 		userDetails.setJoiningDate(profile.getJoiningDate());
 		userDetailsRepository.save(userDetails);
 		
-		return "redirect:/profile?authorization=Bearer%20"+token;
+		return "redirect:/profile";
 	}
 
 	@PostMapping("/add-qualification")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
-	public String addQualification(QualificationRequest qualificationBody, HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String addQualification(QualificationRequest qualificationBody, HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 		
 		// Get user details from token
@@ -132,19 +151,27 @@ public class UserController {
 		qualification.setUserDetails(userDetails);
 		qualification = qualificationRepository.save(qualification);
 		
-		return "redirect:/profile?authorization=Bearer%20"+token;
+		return "redirect:/profile";
 	}
 	
 	@PostMapping("/edit-qualification/{qualificationId}")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
-	public String editQualification(@PathVariable("qualificationId") Integer qualiicationId, QualificationRequest qualificationBody, HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String editQualification(
+		@PathVariable("qualificationId") Integer qualiicationId,
+		QualificationRequest qualificationBody,
+		HttpSession session,
+		Model model
+	) {
+		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 		
 		// Get user details from token
 		String username = jwtUtils.getUserNameFromJwtToken(token);
 		Optional<User> user = userRepository.findByUsername(username);
 		UserDetails userDetails = userDetailsRepository.findByUser(user.get());
+		
+		model.addAttribute("role", user.get().getRole().name());
+		model.addAttribute("jwtToken", token);
 		
 		// Fetch qualification and save after validating
 		Optional<Qualification> qualificationRef = qualificationRepository.findById(qualiicationId);
@@ -167,6 +194,6 @@ public class UserController {
 		qualification.setUserDetails(userDetails);
 		qualification = qualificationRepository.save(qualification);
 		
-		return "redirect:/profile?authorization=Bearer%20"+token;
+		return "redirect:/profile";
 	}
 }

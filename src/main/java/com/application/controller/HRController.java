@@ -31,7 +31,7 @@ import com.application.repository.UserDetailsRepository;
 import com.application.repository.UserRepository;
 import com.application.security.jwt.JwtUtils;
 
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/hr")
@@ -53,8 +53,8 @@ public class HRController {
 	JwtUtils jwtUtils;
 	
 	@GetMapping(value={"", "/"})
-	public String hr(HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String hr(HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 
 		// Get Project for current hr
@@ -63,14 +63,15 @@ public class HRController {
 		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
 		Project project = hrDetails.getProject();
 		
+		model.addAttribute("role", hr.get().getRole().name());
 		model.addAttribute("project", project);
 		model.addAttribute("jwtToken", token);
 		return "hr";
 	}
 	
 	@GetMapping("/edit-project")
-	public String editProject(HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String editProject(HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 		
 		// Get Project for current hr
@@ -79,14 +80,15 @@ public class HRController {
 		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
 		Project project = hrDetails.getProject();
 
+		model.addAttribute("role", hr.get().getRole().name());
 		model.addAttribute("project", project);
 		model.addAttribute("jwtToken", token);
 		return "editProject";
 	}
 
 	@PostMapping("/edit-project")
-	public String postEditProject(String location, HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String postEditProject(String location, HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 		
 		// Get Project for current hr
@@ -98,21 +100,36 @@ public class HRController {
 		project.setLocation(location);
 		projectRepository.save(project);
 		
-		return "redirect:/hr?authorization=Bearer%20"+token;
+		return "redirect:/hr";
 	}
 	
 	@GetMapping("/project/add-employees")
-	public String addEmployees(HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String addEmployees(HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+		
+		// Get current hr details
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> hr = userRepository.findByUsername(username);
 
-		model.addAttribute("jwtToken", headerAuth.substring(7, headerAuth.length()));
+		model.addAttribute("role", hr.get().getRole().name());
+		model.addAttribute("jwtToken", token);
 		return "addEmployees";
 	}
 	
 	@PostMapping("/project/add-employees")
-	public String postAddEmployees(@RequestParam MultipartFile file, HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String postAddEmployees(@RequestParam MultipartFile file, HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
+		
+		// Get Project for current hr
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> hr = userRepository.findByUsername(username);
+		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
+		Project project = hrDetails.getProject();
+
+		model.addAttribute("role", hr.get().getRole().name());
+		model.addAttribute("jwtToken", token);
 		
 		try {
 			Workbook workbook = new XSSFWorkbook(file.getInputStream());
@@ -122,12 +139,6 @@ public class HRController {
 			rows.next();
 			
 			DataFormatter fmt = new DataFormatter();
-			
-			// Get Project for current hr
-			String username = jwtUtils.getUserNameFromJwtToken(token);
-			Optional<User> hr = userRepository.findByUsername(username);
-			UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
-			Project project = hrDetails.getProject();
 			
 			while (rows.hasNext()) {
 				Row row = rows.next();
@@ -156,9 +167,7 @@ public class HRController {
 			}
 			
 			workbook.close();
-			
-			model.addAttribute("jwtToken", token);
-			return "redirect:/hr?authorization=Bearer%20"+token;
+			return "redirect:/hr";
 		} catch (IOException e) {
 			model.addAttribute("error", "Fail to parse Excel file: "+e.getMessage());
 			return "error";
@@ -166,8 +175,8 @@ public class HRController {
 	}
 	
 	@GetMapping("/project/employees")
-	public String employees(HttpServletRequest request, Model model) {
-		String headerAuth = request.getParameter("authorization");
+	public String employees(HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 
 		// Get Project for current hr
@@ -179,6 +188,7 @@ public class HRController {
 		// Get all employees in this project
 		List<UserDetails> employees = userDetailsRepository.findByProject(project);
 		
+		model.addAttribute("role", hr.get().getRole().name());
 		model.addAttribute("employees", employees);
 		model.addAttribute("jwtToken", token);
 		return "projectEmployees";

@@ -23,7 +23,7 @@
 					</div>
 				</div>
 				<form
-					th:action="@{'/edit-profile?authorization=Bearer%20' + ${jwtToken}}"
+					action="/edit-profile"
 					method="POST"
 					class="profile-details"
 				>
@@ -110,7 +110,7 @@
 						th:each="qualification,iter : ${userDetails.qualifications}"
 					>
 						<form
-							th:action="@{'/edit-qualification/' + ${qualification.id} + '?authorization=Bearer%20' + ${jwtToken}}"
+							th:action="@{'/edit-qualification/' + ${qualification.id}}"
 							method="POST"
 							class="qualification-form"
 							th:id="'Qualification-' +${iter.count}"
@@ -182,7 +182,7 @@
 						</form>
 					</div>
 					<form
-						th:action="@{'/add-qualification?authorization=Bearer%20' + ${jwtToken}}"
+						action="/add-qualification"
 						method="POST"
 						class="qualification-form"
 						id="new-qualification-form"
