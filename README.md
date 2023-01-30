@@ -43,7 +43,7 @@ This is an assignment for full stack program. Here HACK comes from teammates fir
       Username: admin
       Password: password
     ```
-  - Go to 'Initialize Data' and upload 'HACKInitialData.xlsx' from 'src/main/resources/assets' and click on submit
+  - Go to 'Initialize Data' and upload 'HACKInitialData.xlsx' from 'src/main/resources/static/assets' and click on submit
   - Update data as you want and check the passwords for HR
   - Click on logout
  
@@ -51,7 +51,7 @@ This is an assignment for full stack program. Here HACK comes from teammates fir
   - Go to Login Page and give HR credentials as initialized above
   - Check all features
   - Go to 'AddEmployees' Link on '/hr' page
-  - Upload 'HACKProjectEmployeeData.xlsx' from 'src/main/resources/assets' and click on submit
+  - Upload 'HACKProjectEmployeeData.xlsx' from 'src/main/resources/static/assets' and click on submit
   - Update data as you want and check the passwords for Employee
   - Click on logout
  
