@@ -33,7 +33,7 @@
 							<td th:text="${employee.contact}"></td>
 							<td th:text="${employee.address}"></td>
 							<td th:text="${employee.joiningDate}"></td>
-							<td><a th:href="@{'/hr/project/employee/'+${employee.id}}">
+							<td><a th:href="@{'/hr/project/employee/'+${employee.user.id}}">
 								View
 							</a></td>
 						</tr>
