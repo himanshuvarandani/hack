@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.application.entity.DailyUpdate;
 import com.application.entity.Project;
+import com.application.entity.Role;
 import com.application.entity.User;
 import com.application.entity.UserDetails;
 import com.application.repository.DailyUpdatesRepository;
@@ -58,8 +59,8 @@ public class EmployeeController {
 		UserDetails employeeDetails = userDetailsRepository.findByUser(employee);
 		Project project = employeeDetails.getProject();
 		
-		// Get employee details for this project
-		List<UserDetails> hrDetails = userDetailsRepository.findByProject(project);
+		// Get hr details for this project
+		List<UserDetails> hrDetails = userDetailsRepository.findByProjectAndRole(project, Role.ROLE_HR);
 		
 		
 		// Check for todays update

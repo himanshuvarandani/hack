@@ -218,6 +218,7 @@ public class HRController {
 		return "projectEmployees";
 	}
 	
+	@SuppressWarnings("deprecation")
 	@GetMapping("/project/employee/{employeeId}")
 	public String employeeUpdates(@PathVariable("employeeId") Integer employeeId, HttpSession session, Model model) {
 		String headerAuth = (String) session.getAttribute("Authorization");
