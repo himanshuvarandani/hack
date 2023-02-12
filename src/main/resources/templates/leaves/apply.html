@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>HACK Leave Application</title>
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/layout.css}">
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/applyLeave.css}">
+	</head>
+	<body>
+        <header>
+			<th:block th:include="fragments/layout :: header" />
+        </header>
+		<div class="apply-form">
+			<h1>Apply Leave</h1>
+			<form action="/leaves/apply" method="POST">
+				<label for="startDate">Start Date</label>
+				<input type="date" name="startDate" placeholder="Start Date" required>
+				<label for="endDate">End Date</label>
+				<input type="date" name="endDate" placeholder="End Date" required>
+				<label for="reason">Reason</label>
+				<input type="text" name="reason" placeholder="Reason" required>
+				<input type="submit">
+			</form>
+		</div>
+        <footer>
+			<th:block th:include="fragments/layout :: footer" />
+        </footer>
+	</body>
+</html>

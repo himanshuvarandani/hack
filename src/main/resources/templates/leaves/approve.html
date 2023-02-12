@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	    <title>HACK</title>
+	    <title>HACK Approve Leaves</title>
 	    <link rel="stylesheet" type="text/css" th:href="@{/css/layout.css}">
 	    <link rel="stylesheet" type="text/css" th:href="@{/css/table.css}">
 	</head>
@@ -14,28 +14,29 @@
 				<img th:src="@{/images/HACK_image1.png}" />
 			</div>
 			<div class="details">
-				<h2 class="heading">Project Employees</h2>
+				<h2 class="heading">Leaves To Approve</h2>
 				<table>
 					<thead>
 						<tr>
-							<th>Employee Id</th>
-							<th>Name</th>
-							<th>Contact</th>
-							<th>Address</th>
-							<th>Joining Date</th>
-							<th>Daily Updates</th>
+							<th>Start Date</th>
+							<th>End Date</th>
+							<th>Reason</th>
+							<th>Approve</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="employee : ${employees}">
-							<td th:text="${employee.employeedId}"></td>
-							<td th:text="${employee.name}"></td>
-							<td th:text="${employee.contact}"></td>
-							<td th:text="${employee.address}"></td>
-							<td th:text="${employee.joiningDate}"></td>
-							<td><a th:href="@{'/hr/project/employee/'+${employee.id}}">
-								View
-							</a></td>
+						<tr th:each="leave : ${leaves}">
+							<td th:text="${leave.startDate}"></td>
+							<td th:text="${leave.endDate}"></td>
+							<td th:text="${leave.reason}"></td>
+							<td>
+								<form
+									th:action="'/leaves/approve/' + ${leave.id}"
+									method="POST"
+								>
+									<button type="submit">Approve</button>
+								</form>
+							</td>
 						</tr>
 					</tbody>
 				</table>

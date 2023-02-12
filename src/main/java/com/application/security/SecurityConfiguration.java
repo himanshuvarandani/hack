@@ -67,6 +67,8 @@ public class SecurityConfiguration {
 	        .requestMatchers("/admin/**").hasRole("ADMIN")
 	        .requestMatchers("/hr/**").hasRole("HR")
 	        .requestMatchers("/employee/**").hasRole("EMPLOYEE")
+	        .requestMatchers("/leaves/approve/**").hasAnyRole("ADMIN", "HR")
+	        .requestMatchers("/leaves/toApprove").hasAnyRole("ADMIN", "HR")
 	        .anyRequest().authenticated();
 	    
 	    http.authenticationProvider(authenticationProvider());

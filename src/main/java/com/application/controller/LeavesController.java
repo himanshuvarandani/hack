@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,11 +55,15 @@ public class LeavesController {
 			leaves = leaveRepository.findByUserAndApproved(user, approved);
 		}
 		
+		model.addAttribute("approved", approved);
 		model.addAttribute("leaves", leaves);
-		return "leaves";
+		model.addAttribute("role", user.getRole().name());
+		model.addAttribute("jwtToken", token);
+		return "leaves/index";
 	}
 	
 	@GetMapping("/toApprove")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
 	public String leavesToApprove(HttpSession session, Model model) {
 		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
@@ -71,11 +76,28 @@ public class LeavesController {
 		List<Leaves> leaves = leaveRepository.findByApproverAndApproved(approver, false);
 		
 		model.addAttribute("leaves", leaves);
-		return "approveLeaves";
+		model.addAttribute("role", approver.getRole().name());
+		model.addAttribute("jwtToken", token);
+		return "leaves/approve";
+	}
+	
+	@GetMapping("/apply")
+	public String applyLeave(HttpSession session, Model model) {
+		String headerAuth = (String) session.getAttribute("Authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+
+		// Get current user
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> userRef = userRepository.findByUsername(username);
+		User user = userRef.get();
+		
+		model.addAttribute("role", user.getRole().name());
+		model.addAttribute("jwtToken", token);
+		return "leaves/apply";
 	}
 	
 	@PostMapping("/apply")
-	public String applyLeave(LeaveRequest leaveData, HttpSession session, Model model) {
+	public String applyLeave(LeaveRequest leaveData, HttpSession session) {
 		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 
@@ -105,12 +127,13 @@ public class LeavesController {
 		leave.setApprover(approver);
 		leaveRepository.save(leave);
 		
-		return "redirect:/leaves/toApprove";
+		return "redirect:/leaves";
 	}
 	
 	@SuppressWarnings("deprecation")
 	@PostMapping("/approve/{leaveId}")
-	public String approveLeave(@PathVariable("leaveId") Integer leaveId, HttpSession session, Model model) {
+	@PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
+	public String approveLeave(@PathVariable("leaveId") Integer leaveId, HttpSession session) {
 		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 
