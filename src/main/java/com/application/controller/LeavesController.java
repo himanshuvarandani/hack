@@ -97,7 +97,7 @@ public class LeavesController {
 	}
 	
 	@PostMapping("/apply")
-	public String applyLeave(LeaveRequest leaveData, HttpSession session) {
+	public String postApplyLeave(LeaveRequest leaveData, HttpSession session) {
 		String headerAuth = (String) session.getAttribute("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 

@@ -10,7 +10,8 @@
 }
 
 .apply-form input[type="text"],
-.apply-form input[type="date"] {
+.apply-form input[type="date"],
+.apply-form input[type="datetime-local"] {
 	width: 100%;
 	padding: 15px;
 	border: 1px solid #7286D3;

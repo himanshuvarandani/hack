@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>HACK User Meetings</title>
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/layout.css}">
+	    <link rel="stylesheet" type="text/css" th:href="@{/css/table.css}">
+	</head>
+	<body>
+		<header>
+			<th:block th:include="fragments/layout :: header" />
+		</header>
+        <div class="main-content">
+			<div class="main-image">
+				<img th:src="@{/images/HACK_image1.png}" />
+			</div>
+			<div class="details">
+				<h2 class="heading">Meetings</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>Start Time</th>
+							<th>End Time</th>
+							<th>Title</th>
+							<th>Participants</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="meeting : ${meetings}">
+							<td th:text="${meeting.startTime}"></td>
+							<td th:text="${meeting.endTime}"></td>
+							<td th:text="${meeting.title}"></td>
+							<td>
+								<span th:each="participant : ${meeting.participants}">
+									<span th:text="${participant.username} + ','"></span>
+								</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+        </div>
+        <footer>
+			<th:block th:include="fragments/layout :: footer" />
+        </footer>
+	</body>
+</html>
