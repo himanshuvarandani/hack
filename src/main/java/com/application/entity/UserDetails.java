@@ -38,7 +38,7 @@ public class UserDetails {
 	@OneToMany(cascade=CascadeType.ALL, mappedBy="userDetails", fetch=FetchType.EAGER)
 	private List<Qualification> qualifications;
 	
-	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name="user_id", referencedColumnName="id")
 	private User user;
 	

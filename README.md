@@ -34,7 +34,7 @@ This is an assignment for full stack program. Here HACK comes from teammates fir
  #### Initialize Admin Data
   - Run below sql command on your database to add admin credentials
     ```
-      INSERT INTO USER VALUES (5, 'admin@gmail.com', '$2a$10$yEtk7yiD9lTVWz9.wT8KtuXjwCHjTE8KkTT6IqJhZ3D3I4B8Uw3O6', 'ROLE_ADMIN', 'admin');
+      INSERT INTO USER VALUES (10000, 'admin@gmail.com', '$2a$10$yEtk7yiD9lTVWz9.wT8KtuXjwCHjTE8KkTT6IqJhZ3D3I4B8Uw3O6', 'ROLE_ADMIN', 'admin');
     ```
  
  #### Login as Admin and Initialize Application Data
