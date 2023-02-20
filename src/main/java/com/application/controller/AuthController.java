@@ -1,10 +1,10 @@
 package com.application.controller;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,14 +14,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.application.entity.Role;
 import com.application.entity.User;
 import com.application.repository.UserRepository;
+import com.application.request.LoginRequest;
+import com.application.response.LoginResponse;
 import com.application.security.jwt.JwtUtils;
-import com.application.security.services.UserDetailsImpl;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -41,32 +42,26 @@ public class AuthController {
 	JwtUtils jwtUtils;
 	
 	@PostMapping("/signin")
-	public String authenticateUser(
-		@RequestParam String username,
-		@RequestParam String password,
-		HttpServletRequest request,
-		Model model
+	public ResponseEntity<LoginResponse> authenticateUser(
+		@RequestBody LoginRequest credentials,
+		HttpServletRequest request
 	) {
 		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(username, password));
+				new UsernamePasswordAuthenticationToken(
+						credentials.getUsername(), credentials.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = jwtUtils.generateJwtToken(authentication);
 		
-		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();		
-		List<String> roles = userDetails.getAuthorities().stream()
-				.map(item -> item.getAuthority())
-				.collect(Collectors.toList());
-
 		request.getSession().setMaxInactiveInterval(3600);
 		request.getSession().setAttribute("Authorization", "Bearer "+jwt);
 		
-		model.addAttribute("jwtToken", jwt);
-		if (roles.get(0)==Role.ROLE_HR.name())
-			return "redirect:/hr";
-		if (roles.get(0)==Role.ROLE_EMPLOYEE.name())
-			return "redirect:/employee";
-		return "redirect:/";
+		Optional<User> user = userRepository.findByUsername(credentials.getUsername());
+		
+		LoginResponse response = new LoginResponse();
+		response.setAccessToken(jwt);
+		response.setUser(user.get());
+		return new ResponseEntity<LoginResponse>(response, HttpStatus.OK);
 	}
 	
 	@GetMapping("/reset-password")

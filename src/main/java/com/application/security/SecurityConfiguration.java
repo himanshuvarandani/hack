@@ -1,5 +1,7 @@
 package com.application.security;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.application.security.jwt.AuthEntryPointJwt;
 import com.application.security.jwt.AuthTokenFilter;
@@ -53,8 +58,8 @@ public class SecurityConfiguration {
 	  
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable()
-	        .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+		http.cors().configurationSource(corsConfigurationSource()).and().csrf().disable()
+			.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 	        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS).and()
 	        .authorizeRequests().requestMatchers("/auth/**").permitAll()
 	        .requestMatchers("/css/**").permitAll()
@@ -64,6 +69,7 @@ public class SecurityConfiguration {
 	        .requestMatchers("/initialize-data").permitAll()
 	        .requestMatchers("/").permitAll()
 	        .requestMatchers("/signin").permitAll()
+	        .requestMatchers("/auth/**").permitAll()
 	        .requestMatchers("/admin/**").hasRole("ADMIN")
 	        .requestMatchers("/hr/**").hasRole("HR")
 	        .requestMatchers("/employee/**").hasRole("EMPLOYEE")
@@ -76,5 +82,18 @@ public class SecurityConfiguration {
 	    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	    
 	    return http.build();
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+	    CorsConfiguration configuration = new CorsConfiguration();
+	    configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+	    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE"));
+	    configuration.setAllowedHeaders(Arrays.asList("*"));
+	    //in case authentication is enabled this flag MUST be set, otherwise CORS requests will fail
+	    configuration.setAllowCredentials(true);
+	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	    source.registerCorsConfiguration("/**", configuration);
+	    return source;
 	}
 }
