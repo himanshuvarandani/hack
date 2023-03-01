@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.application.entity.DailyUpdate;
+import com.application.entity.Project;
 import com.application.entity.Qualification;
 import com.application.entity.User;
 import com.application.entity.UserDetails;
@@ -195,9 +196,67 @@ public class UserController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
+	@GetMapping("/project")
+	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
+	public ResponseEntity<Project> project(
+			HttpServletRequest request) {
+		String headerAuth = (String) request.getHeader("Authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+		
+		// Get user details from token
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> userRef = userRepository.findByUsername(username);
+		UserDetails userDetails =
+				userDetailsRepository.findByUser(userRef.get());
+		Project project = userDetails.getProject();
+		
+		return new ResponseEntity<Project>(project, HttpStatus.OK);
+	}
+	
+	@GetMapping("/daily-updates")
+	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
+	public ResponseEntity<List<DailyUpdate>> dailyUpdates(
+			HttpServletRequest request) {
+		String headerAuth = (String) request.getHeader("Authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+		
+		// Get user details from token
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> userRef = userRepository.findByUsername(username);
+		User user = userRef.get();
+		
+		List<DailyUpdate> dailyUpdates = 
+				dailyUpdatesRepository.findByUser(user);
+		
+		return new ResponseEntity<List<DailyUpdate>>(
+				dailyUpdates, HttpStatus.OK);
+	}
+	
+	@GetMapping("/daily-updates/today")
+	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
+	public ResponseEntity<DailyUpdate> todaysDailyUpdate(
+			HttpServletRequest request) {
+		String headerAuth = (String) request.getHeader("Authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+		
+		// Get user details from token
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> userRef = userRepository.findByUsername(username);
+		User user = userRef.get();
+		
+		Optional<DailyUpdate> dailyUpdate = 
+				dailyUpdatesRepository.findByUserAndDate(
+						user, new Date(new java.util.Date().getTime()));
+		
+		if (dailyUpdate.isEmpty())
+			return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<DailyUpdate>(
+				dailyUpdate.get(), HttpStatus.OK);
+	}
+	
 	@PostMapping("/daily-update")
 	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
-	public ResponseEntity<Object> dailyUpdate(
+	public ResponseEntity<Object> postDailyUpdate(
 			@RequestBody String description,
 			@RequestBody Integer duration,
 			HttpServletRequest request
