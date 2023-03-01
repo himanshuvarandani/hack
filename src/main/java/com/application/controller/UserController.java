@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.application.entity.DailyUpdate;
 import com.application.entity.Project;
@@ -26,6 +27,7 @@ import com.application.repository.UserDetailsRepository;
 import com.application.repository.UserRepository;
 import com.application.request.ProfileRequest;
 import com.application.request.QualificationRequest;
+import com.application.response.DailyUpdateRequest;
 import com.application.response.ProfileResponse;
 import com.application.response.QualificationResponse;
 import com.application.security.jwt.JwtUtils;
@@ -33,6 +35,8 @@ import com.application.security.jwt.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
+@RequestMapping("/user")
+@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
 public class UserController {
 	@Autowired
 	UserRepository userRepository;
@@ -50,7 +54,6 @@ public class UserController {
 	JwtUtils jwtUtils;
 	
 	@GetMapping("/profile")
-	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
 	public ResponseEntity<ProfileResponse> profile(HttpServletRequest request) {
 		String headerAuth = (String) request.getHeader("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
@@ -76,7 +79,6 @@ public class UserController {
 	}
 	
 	@GetMapping("/qualifications")
-	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
 	public ResponseEntity<List<QualificationResponse>> qualifications(
 			HttpServletRequest request) {
 		String headerAuth = (String) request.getHeader("Authorization");
@@ -105,7 +107,6 @@ public class UserController {
 	}
 	
 	@PostMapping("/profile/edit")
-	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
 	public ResponseEntity<Object> postEditProfile(
 			@RequestBody ProfileRequest profile,
 			HttpServletRequest request
@@ -130,7 +131,6 @@ public class UserController {
 	}
 
 	@PostMapping("/qualification/new")
-	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
 	public ResponseEntity<Object> addQualification(
 			@RequestBody QualificationRequest qualificationBody,
 			HttpServletRequest request
@@ -157,7 +157,6 @@ public class UserController {
 	}
 	
 	@PostMapping("/qualification/{qualificationId}/edit")
-	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
 	public ResponseEntity<Object> editQualification(
 			@PathVariable("qualificationId") Integer qualiicationId,
 			@RequestBody QualificationRequest qualificationBody,
@@ -197,7 +196,6 @@ public class UserController {
 	}
 	
 	@GetMapping("/project")
-	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
 	public ResponseEntity<Project> project(
 			HttpServletRequest request) {
 		String headerAuth = (String) request.getHeader("Authorization");
@@ -214,7 +212,6 @@ public class UserController {
 	}
 	
 	@GetMapping("/daily-updates")
-	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
 	public ResponseEntity<List<DailyUpdate>> dailyUpdates(
 			HttpServletRequest request) {
 		String headerAuth = (String) request.getHeader("Authorization");
@@ -233,7 +230,6 @@ public class UserController {
 	}
 	
 	@GetMapping("/daily-updates/today")
-	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
 	public ResponseEntity<DailyUpdate> todaysDailyUpdate(
 			HttpServletRequest request) {
 		String headerAuth = (String) request.getHeader("Authorization");
@@ -255,10 +251,8 @@ public class UserController {
 	}
 	
 	@PostMapping("/daily-update")
-	@PreAuthorize("hasRole('EMPLOYEE') or hasRole('HR')")
-	public ResponseEntity<Object> postDailyUpdate(
-			@RequestBody String description,
-			@RequestBody Integer duration,
+	public ResponseEntity<DailyUpdate> postDailyUpdate(
+			@RequestBody DailyUpdateRequest dailyUpdateData,
 			HttpServletRequest request
 	) {
 		String headerAuth = (String) request.getHeader("Authorization");
@@ -274,20 +268,21 @@ public class UserController {
 		Optional<DailyUpdate> dailyUpdateRef = 
 				dailyUpdatesRepository.findByUserAndDate(user, today);
 		
+		DailyUpdate newUpdate;
 		if (dailyUpdateRef.isEmpty()) {
 			DailyUpdate dailyUpdate = new DailyUpdate();
 			dailyUpdate.setDate(today);
-			dailyUpdate.setDescription(description);
-			dailyUpdate.setDuration(duration);
+			dailyUpdate.setDescription(dailyUpdateData.getDescription());
+			dailyUpdate.setDuration(dailyUpdateData.getDuration());
 			dailyUpdate.setUser(user);
-			dailyUpdatesRepository.save(dailyUpdate);
+			newUpdate = dailyUpdatesRepository.save(dailyUpdate);
 		} else {
 			DailyUpdate dailyUpdate = dailyUpdateRef.get();
-			dailyUpdate.setDescription(description);
-			dailyUpdate.setDuration(duration);
-			dailyUpdatesRepository.save(dailyUpdate);
+			dailyUpdate.setDescription(dailyUpdateData.getDescription());
+			dailyUpdate.setDuration(dailyUpdateData.getDuration());
+			newUpdate = dailyUpdatesRepository.save(dailyUpdate);
 		}
 		
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<DailyUpdate>(newUpdate, HttpStatus.OK);
 	}
 }

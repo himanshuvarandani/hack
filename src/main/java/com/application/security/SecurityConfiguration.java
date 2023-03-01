@@ -70,6 +70,7 @@ public class SecurityConfiguration {
 	        .requestMatchers("/").permitAll()
 	        .requestMatchers("/signin").permitAll()
 	        .requestMatchers("/auth/**").permitAll()
+	        .requestMatchers("/user/**").hasAnyRole("EMPLOYEE", "HR")
 	        .requestMatchers("/admin/**").hasRole("ADMIN")
 	        .requestMatchers("/hr/**").hasRole("HR")
 	        .requestMatchers("/employee/**").hasRole("EMPLOYEE")

@@ -42,7 +42,7 @@ public class UserDetails {
 	@JoinColumn(name="user_id", referencedColumnName="id")
 	private User user;
 	
-	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name="project_id", referencedColumnName="id")
 	private Project project;
 
