@@ -2,6 +2,7 @@ package com.application.controller;
 
 import java.io.IOException;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,7 @@ import com.application.repository.DailyUpdatesRepository;
 import com.application.repository.ProjectRepository;
 import com.application.repository.UserDetailsRepository;
 import com.application.repository.UserRepository;
+import com.application.response.ProfileResponse;
 import com.application.security.jwt.JwtUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,61 +49,59 @@ public class HRController {
 
 	@Autowired
 	ProjectRepository projectRepository;
-	
+
 	@Autowired
 	UserRepository userRepository;
-	
+
 	@Autowired
 	UserDetailsRepository userDetailsRepository;
 
 	@Autowired
 	DailyUpdatesRepository dailyUpdatesRepository;
-	
+
 	@Autowired
 	JwtUtils jwtUtils;
-	
+
 	@PostMapping("/edit-project")
-	public ResponseEntity<Object> editProject(
-			@RequestBody String location, HttpServletRequest request) {
+	public ResponseEntity<Object> editProject(@RequestBody String location, HttpServletRequest request) {
 		String headerAuth = (String) request.getHeader("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
-		
+
 		// Get Project for current hr
 		String username = jwtUtils.getUserNameFromJwtToken(token);
 		Optional<User> hr = userRepository.findByUsername(username);
 		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
 		Project project = hrDetails.getProject();
-		
+
 		project.setLocation(location);
 		projectRepository.save(project);
-		
+
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/project/add-employees")
-	public ResponseEntity<Object> addEmployees(
-			@RequestParam MultipartFile file, HttpServletRequest request) {
+	public ResponseEntity<Object> addEmployees(@RequestParam MultipartFile file, HttpServletRequest request) {
 		String headerAuth = (String) request.getHeader("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
-		
+
 		// Get Project for current hr
 		String username = jwtUtils.getUserNameFromJwtToken(token);
 		Optional<User> hr = userRepository.findByUsername(username);
 		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
 		Project project = hrDetails.getProject();
-		
+
 		try {
 			Workbook workbook = new XSSFWorkbook(file.getInputStream());
-			
+
 			Sheet sheet = workbook.getSheet(workbook.getSheetName(0));
 			Iterator<Row> rows = sheet.iterator();
 			rows.next();
-			
+
 			DataFormatter fmt = new DataFormatter();
-			
+
 			while (rows.hasNext()) {
 				Row row = rows.next();
-				
+
 				// Create user account with password encoding
 				User user = new User();
 				user.setUsername(row.getCell(0).getStringCellValue());
@@ -109,7 +109,7 @@ public class HRController {
 				user.setPassword(passwordEncoder.encode(row.getCell(2).getStringCellValue()));
 				user.setRole(Role.ROLE_EMPLOYEE);
 				user = userRepository.save(user);
-				
+
 				// Create user details with above user and hr project
 				UserDetails userDetails = new UserDetails();
 				userDetails.setEmployeedId(Integer.parseInt(fmt.formatCellValue(row.getCell(3))));
@@ -124,17 +124,16 @@ public class HRController {
 				userDetails.setProject(project);
 				userDetailsRepository.save(userDetails);
 			}
-			
+
 			workbook.close();
 			return new ResponseEntity<Object>(HttpStatus.OK);
 		} catch (IOException e) {
 			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
-	    }
+		}
 	}
-	
+
 	@GetMapping("/project/employees")
-	public ResponseEntity<List<UserDetails>> employees(
-			HttpServletRequest request) {
+	public ResponseEntity<List<ProfileResponse>> employees(HttpServletRequest request) {
 		String headerAuth = (String) request.getHeader("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 
@@ -143,19 +142,32 @@ public class HRController {
 		Optional<User> hr = userRepository.findByUsername(username);
 		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
 		Project project = hrDetails.getProject();
-		
+
 		// Get all employees in this project
-		List<UserDetails> employees =
-				userDetailsRepository.findByProjectAndRole(
-						project, Role.ROLE_EMPLOYEE);
-		
-		return new ResponseEntity<List<UserDetails>>(employees, HttpStatus.OK);
+		List<UserDetails> employees = userDetailsRepository.findByProjectAndRole(project, Role.ROLE_EMPLOYEE);
+
+		List<ProfileResponse> employeesList = new ArrayList<ProfileResponse>();
+		employees.forEach((e) -> {
+			ProfileResponse employee = new ProfileResponse();
+			employee.setAddress(e.getAddress());
+			employee.setBloodGroup(e.getBloodGroup());
+			employee.setContact(e.getContact());
+			employee.setDateOfBirth(e.getDateOfBirth());
+			employee.setEmergencyContact(e.getEmergencyContact());
+			employee.setEmployeedId(e.getEmployeedId());
+			employee.setId(e.getId());
+			employee.setJoiningDate(e.getJoiningDate());
+			employee.setName(e.getName());
+			employee.setUser(e.getUser());
+
+			employeesList.add(employee);
+		});
+
+		return new ResponseEntity<List<ProfileResponse>>(employeesList, HttpStatus.OK);
 	}
-	
-	@SuppressWarnings("deprecation")
-	@GetMapping("/project/employee/{employeeId}/daily-updates")
-	public ResponseEntity<List<DailyUpdate>> employeeDailyUpdates(
-			@PathVariable("employeeId") Integer employeeId,
+
+	@GetMapping("/project/employee/{employeeId}")
+	public ResponseEntity<User> employeeDetails(@PathVariable("employeeId") Integer employeeId,
 			HttpServletRequest request) {
 		String headerAuth = (String) request.getHeader("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
@@ -165,18 +177,44 @@ public class HRController {
 		Optional<User> hr = userRepository.findByUsername(username);
 		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
 		Project project = hrDetails.getProject();
-		
+
 		// Fetch employee updates
-		User employee = userRepository.getById(employeeId);
-		UserDetails employeeDetails =
-				userDetailsRepository.findByUser(employee);
+		Optional<User> employeeRef = userRepository.findById(employeeId);
+		if (employeeRef.isEmpty())
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+		User employee = employeeRef.get();
+		UserDetails employeeDetails = userDetailsRepository.findByUser(employee);
 		if (employeeDetails.getProject() != project)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		
-		List<DailyUpdate> employeeUpdates =
-				dailyUpdatesRepository.findByUser(employee);
-		
-		return new ResponseEntity<List<DailyUpdate>>(
-				employeeUpdates, HttpStatus.OK);
+
+		return new ResponseEntity<User>(employee, HttpStatus.OK);
+	}
+
+	@GetMapping("/project/employee/{employeeId}/daily-updates")
+	public ResponseEntity<List<DailyUpdate>> employeeDailyUpdates(@PathVariable("employeeId") Integer employeeId,
+			HttpServletRequest request) {
+		String headerAuth = (String) request.getHeader("Authorization");
+		String token = headerAuth.substring(7, headerAuth.length());
+
+		// Get Project for current hr
+		String username = jwtUtils.getUserNameFromJwtToken(token);
+		Optional<User> hr = userRepository.findByUsername(username);
+		UserDetails hrDetails = userDetailsRepository.findByUser(hr.get());
+		Project project = hrDetails.getProject();
+
+		// Fetch employee updates
+		Optional<User> employeeRef = userRepository.findById(employeeId);
+		if (employeeRef.isEmpty())
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+		User employee = employeeRef.get();
+		UserDetails employeeDetails = userDetailsRepository.findByUser(employee);
+		if (employeeDetails.getProject() != project)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+		List<DailyUpdate> employeeUpdates = dailyUpdatesRepository.findByUser(employee);
+
+		return new ResponseEntity<List<DailyUpdate>>(employeeUpdates, HttpStatus.OK);
 	}
 }
