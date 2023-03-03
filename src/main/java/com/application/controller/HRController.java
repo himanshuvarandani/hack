@@ -1,6 +1,5 @@
 package com.application.controller;
 
-import java.io.IOException;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -127,7 +126,7 @@ public class HRController {
 
 			workbook.close();
 			return new ResponseEntity<Object>(HttpStatus.OK);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
