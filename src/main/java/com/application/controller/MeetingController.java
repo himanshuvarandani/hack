@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.application.entity.Meeting;
@@ -19,7 +21,7 @@ import com.application.repository.UserRepository;
 import com.application.request.MeetingRequest;
 import com.application.security.jwt.JwtUtils;
 
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/meetings")
@@ -33,8 +35,8 @@ public class MeetingController {
 	
 
 	@GetMapping(value={"", "/"})
-	public String leaves(HttpSession session, Model model) {
-		String headerAuth = (String) session.getAttribute("Authorization");
+	public ResponseEntity<List<Meeting>> meetings(HttpServletRequest request) {
+		String headerAuth = (String) request.getHeader("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 
 		// Get current user
@@ -44,30 +46,12 @@ public class MeetingController {
 		
 		List<Meeting> meetings = meetingRepository.findByParticipant(user);
 		
-		model.addAttribute("meetings", meetings);
-		model.addAttribute("role", user.getRole().name());
-		model.addAttribute("jwtToken", token);
-		return "meetings/index";
+		return new ResponseEntity<List<Meeting>>(meetings, HttpStatus.OK);
 	}
-	
-	@GetMapping("/apply")
-	public String applyMeeting(HttpSession session, Model model) {
-		String headerAuth = (String) session.getAttribute("Authorization");
-		String token = headerAuth.substring(7, headerAuth.length());
-
-		// Get current user
-		String username = jwtUtils.getUserNameFromJwtToken(token);
-		Optional<User> userRef = userRepository.findByUsername(username);
-		User user = userRef.get();
 		
-		model.addAttribute("role", user.getRole().name());
-		model.addAttribute("jwtToken", token);
-		return "meetings/apply";
-	}
-	
-	@PostMapping("/apply")
-	public String postApplyMeeting(MeetingRequest meetingData, HttpSession session) {
-		String headerAuth = (String) session.getAttribute("Authorization");
+	@PostMapping("/create")
+	public ResponseEntity<Object> createMeetings(@RequestBody MeetingRequest meetingData, HttpServletRequest request) {
+		String headerAuth = (String) request.getHeader("Authorization");
 		String token = headerAuth.substring(7, headerAuth.length());
 
 		// Get current user
@@ -91,6 +75,6 @@ public class MeetingController {
 		meeting.setParticipants(participants);
 		meetingRepository.save(meeting);
 		
-		return "redirect:/meetings";
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 }

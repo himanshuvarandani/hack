@@ -25,11 +25,11 @@ public class Leaves {
 	
 	private boolean approved = false;
 
-	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name="user_id", referencedColumnName="id")
 	private User user;
 	
-	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+	@OneToOne(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinColumn(name="approver_id", referencedColumnName="id")
 	private User approver;
 	
