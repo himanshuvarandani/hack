@@ -31,6 +31,12 @@ This is an assignment for full stack program. Here HACK comes from teammates fir
   - Run application as 'Java Application'
   - Tables will be created on your database
  
+ #### Initialize Admin Data
+  - Run below sql command on your database to add admin credentials
+    ```
+      INSERT INTO USER VALUES (10000, 'admin@gmail.com', '$2a$10$yEtk7yiD9lTVWz9.wT8KtuXjwCHjTE8KkTT6IqJhZ3D3I4B8Uw3O6', 'ROLE_ADMIN', 'admin');
+    ```
+ 
 ### Application Frontend
  ```
   https://github.com/himanshuvarandani/hack-frontend.git
