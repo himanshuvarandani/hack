@@ -14,7 +14,7 @@
 	<name>HACK</name>
 	<description>Application for employee and hr to check and update details</description>
 	<properties>
-		<java.version>19</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
