@@ -99,6 +99,12 @@
 	            <spring.profiles.active>docker</spring.profiles.active>
 	        </properties>
 	    </profile>
+	    <profile>
+	        <id>test</id>
+	        <properties>
+	            <spring.profiles.active>test</spring.profiles.active>
+	        </properties>
+	    </profile>
 	</profiles>
 
 </project>
